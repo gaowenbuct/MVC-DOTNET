@@ -1,0 +1,122 @@
+﻿@using MVC.Utils;
+@using MVC.Services.Retail.Vo;
+@{
+    Layout = null;
+}
+@{PageResult<RetailOrderQueryVo> pageResult = ViewData["pageResult"] as PageResult<RetailOrderQueryVo>;
+    List<RetailOrderQueryVo> list = pageResult.Content;
+}
+<input type="hidden" id="totalPage" name="totalPage" value="@pageResult.TotalPage" />
+<input type="hidden" id="currentPage" name="currentPage" value="@pageResult.CurrentPage"/>
+<input type="hidden" id="currentIndex" name="currentIndex" value="@pageResult.CurrentIndex" />
+<script>
+    $(document).ready(function () {
+        //alert($("#currentPage").val());
+        if ($("#totalPage").val() <= 1) {
+            $("#btnPrevious").css('display', 'none');
+            $("#btnNext").css('display', 'none');
+        } else {
+            if ($("#currentPage").val() == 1) {
+                $("#btnPrevious").css('display', 'none');
+            }
+            if ($("#currentPage").val() == $("#totalPage").val()) {
+                $("#btnNext").css('display', 'none');
+            }
+        }
+    });
+</script>
+
+<div class="right">
+    <div class="table">
+        <table width="600" align="left" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td  width="500">
+                    共查得数据
+                    @pageResult.TotalCount
+                    笔
+                </td>
+                <td width="50"><input type="button" id="btnPrevious" name="btnPrevious" class="button2" value="上页" onclick="f_previous()" 
+                                      style="" /></td>
+                <td width="50"><input type="button" id="btnNext" name="btnNext" class="button2" value="下页" onclick="f_next()" 
+                                      style=""/></td>
+            </tr>
+        </table>
+        <table class="list" border="0" cellspacing="1" cellpadding="0">
+            <tr>
+                <td align="center" class="tit">查看</td>
+                <td align="center" class="tit">VIN码</td>
+                <td align="center" class="tit">零售订单</td>
+                <td align="center" class="tit">零售时间</td>
+                <td align="center" class="tit">销售出<br />库日期</td>
+                <td align="center" class="tit">发票日期</td>
+                <td align="center" class="tit">车辆</td>
+                <td align="center" class="tit">颜色</td>
+                <td align="center" class="tit">车型年</td>
+                <td align="center" class="tit">版本号</td>
+                <td align="center" class="tit">内饰</td>
+                <td align="center" class="tit">选装包</td>
+                <td align="center" class="tit">用户</td>
+                <td align="center" class="tit">销售来源</td>
+                <td align="center" class="tit">订单状态</td>
+                <td align="center" class="tit">是否装配原<br />装附件包</td>
+                <td align="center" class="tit">是否加入<br />会员俱乐部</td>
+            </tr>
+            @foreach (var item in list)
+            {
+                <tr>
+                    <td>
+                        <label class="button4_w" onclick="f_details('@item.OrderNo')">详细</label>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vin)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RetailTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OutStockDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.InvoiceDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModelCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Color)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModelYear)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModelVersion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Interior)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrList)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CustomerName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SaleSource)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Accessory)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Club)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

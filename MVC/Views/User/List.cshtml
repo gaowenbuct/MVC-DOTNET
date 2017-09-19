@@ -1,0 +1,268 @@
+﻿@using MVC.Models.System;
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ListUsers</title>
+    <script src="../Content/jquery/jquery-1.10.2.min.js"></script>
+    <script>
+        function create() {
+            $('#Frm').submit();
+        };
+        function createBoth() {
+            $.ajax({
+                type: "post",
+                url: "/User/createBoth",
+                data: { "username": document.getElementById("username").value, "password": document.getElementById("password").value },
+                dataType: "Text",
+                success: function (data) {
+                    location.href = '/User/listBoth';
+                }
+            });
+        };
+        function update(username) {
+            $.ajax({
+                type: "get",
+                url: "/User/update",
+                data: { "username": username, "password": document.getElementById("newPassword").value },
+                dataType: "Text",
+                success: function (data) {
+                    location.href = '/User/list';
+                }
+            });
+        };
+        function updateBoth(username) {
+            $.ajax({
+                type: "get",
+                url: "/User/updateBoth",
+                data: { "username": username, "password": document.getElementById("newPassword").value },
+                dataType: "Text",
+                success: function (data) {
+                    location.href = '/User/listBoth';
+                }
+            });
+        };
+    </script>
+    <script>
+        function createUser() {
+            var user = {
+                "username": document.getElementById("username").value,
+                "password": document.getElementById("password").value
+            };
+            $.ajax({
+                url: 'http://localhost:7148/api/UserApi/', 
+                type: "post",
+                data: JSON.stringify(user),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('User Created Successfully');
+                },
+                error: function () {
+                    alert('User not Created');
+                }
+            });
+            $.ajax({
+                url: 'http://localhost:8080/Web/api/user/',
+                type: "post",
+                data: JSON.stringify(user),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('Remote User Created Successfully');
+                },
+                error: function () {
+                    alert('Remote User not Created');
+                }
+            });
+            location.reload();
+        };
+        function updateUser(username, password) {
+            var user = {
+                "username": username,
+                "password": document.getElementById("newPassword").value
+            };
+            $.ajax({
+                url: 'http://localhost:7148/api/UserApi/',
+                type: "put",
+                data: JSON.stringify(user),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('User delete Successfully');
+                },
+                error: function () {
+                    alert('User not Deleted');
+                }
+            });
+            $.ajax({
+                url: 'http://localhost:8080/Web/api/user/',
+                type: "put",
+                data: JSON.stringify(user),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('Remote User Updated Successfully');
+                },
+                error: function () {
+                    alert('Remote User not Updated');
+                }
+            });
+            location.reload();
+        };
+        function deleteUser(username) {
+            $.ajax({
+                url: 'http://localhost:7148/api/UserApi/' + username,
+                type: "delete",
+                data: {},
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('User delete Successfully');
+                },
+                error: function () {
+                    alert('User not Deleted');
+                }
+            });
+            $.ajax({
+                url: 'http://localhost:8080/Web/api/user/' + username,
+                type: "delete",
+                data: {},
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('Remote User delete Successfully');
+                },
+                error: function () {
+                    alert('Remote User not Deleted');
+                }
+            });
+            location.reload();
+        };
+        function getUser(username) {
+            $.ajax({
+                url: 'http://localhost:7148/api/UserApi/'+username,
+                type: "get",
+                data: {},
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('User Get Successfully:' + data);
+                    console.log(data);
+                },
+                error: function () {
+                    alert('User not Get');
+                }
+            });
+            $.ajax({
+                url: 'http://localhost:8080/Web/api/user/' + username,
+                type: "get",
+                data: {},
+                contentType: "application/json",
+                dataType: "json",
+                success: function (data) {
+                    alert('Remote User Get Successfully:' + data);
+                    console.log(data);
+                },
+                error: function () {
+                    alert('Remote User not Get');
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+    <h4>User</h4>
+    New Password:@Html.TextBox("newPassword")
+    <hr />
+    <form id="Frm" name="userFrm" action="create" method="post">
+        <table class="table">
+            <tr>
+                <th>
+                    username
+                </th>
+                <th>
+                    password
+                </th>
+                <th>front end</th>
+                <th></th>
+                <th>back end</th>
+            </tr>
+            <tr>
+                <td>
+                    @Html.TextBox("username")
+                </td>
+                <td>
+                    @Html.TextBox("password")
+                </td>
+                <td>
+                    <a href="javascript:create()">Create</a>
+                </td>
+                <td>****</td>
+                <td>
+                    <a href="javascript:createBoth()">Create</a>
+                </td>
+                <td>****</td>
+                <td>
+                    <a href="javascript:createUser()">Create</a>
+                </td>
+            </tr>
+            @if (ViewData["list"] != null)
+            {
+                foreach (var item in ViewData["list"] as List<User>)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.username)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.password)
+                        </td>
+                        <td>
+                            @*Html.ActionLink("Update", "update", new { username = item.Username,password="newPassword"})*@
+                            <a href="javascript:update('@item.username')">Update</a>|
+                            @Html.ActionLink("Details", "details", new { username = item.username }) |
+                            @Html.ActionLink("Delete", "delete", new { username = item.username })
+                        </td>
+                        <td>****</td>
+                        <td>
+                            <a href="javascript:updateBoth('@item.username')">Update</a>|
+                            @Html.ActionLink("Details", "detailsBoth", new { username = item.username }) |
+                            @Html.ActionLink("Delete", "deleteBoth", new { username = item.username })
+                        </td>
+                        <td>****</td>
+                        <td>
+                            <a href="javascript:updateUser('@item.username')">Update</a>
+                            <a href="javascript:getUser('@item.username')">Details</a>|
+                            <a href="javascript:deleteUser('@item.username')">Delete</a>|
+                        </td>
+                    </tr>
+                }
+            }
+            <tr><td>****</td></tr>
+            @if (ViewData["listRemote"] != null)
+            {
+                foreach (var item in ViewData["listRemote"] as List<User>)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.username)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.password)
+                        </td>
+                    </tr>
+                        }
+                    }
+                </table>
+        </form>
+    
+    <!--newpassword:<input type="text" id="newpassword" value="newpassword" />-->
+</body>
+</html>

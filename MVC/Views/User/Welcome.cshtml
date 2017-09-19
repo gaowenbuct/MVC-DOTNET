@@ -1,0 +1,23 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Welcome</title>
+</head>
+<body>
+    <div> welcome, @Html.Encode(ViewData["user"]),you are already logged in 
+        @*Html.ActionLink("return", "gotoLogin", "User")*@
+    </div>
+    
+    <div>
+        @Html.ActionLink("List users", "listBoth", "User")
+    </div>
+    <a href="javascript:history.go(-1)">return</a> 
+</body>
+</html>

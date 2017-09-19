@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler,log4net" />
+  </configSections>
+
+  <log4net debug="true">
+  <root>
+    <level value="DEBUG" />
+    <appender-ref ref="RollingLogFileAppender" />
+    <appender-ref ref="ErrorLogFileAppender" />
+  </root>
+  <logger name="MVC.Services.Impl.UserServiceImpl">
+    <level value="DEBUG" />
+    <appender-ref ref="Log1FileAppender" />
+  </logger>
+    <logger name="MVC.Services.Impl.UserApiServiceImpl">
+      <level value="DEBUG" />
+      <appender-ref ref="Log2FileAppender" />
+    </logger>
+    <logger name="MVC.Services.Impl">
+      <level value="DEBUG" />
+      <appender-ref ref="Log3FileAppender" />
+    </logger>
+  <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
+    <param name="File" value="E:\\log.txt" />
+    <param name="AppendToFile" value="true" />
+    <param name="RollingStyle" value="Size" />
+    <param name="MaxSizeRollBackups" value="10" />
+    <param name="MaxFileSize" value="10240" />
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+    <param name="StaticLogFileName" value="true" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="[%date] %thread %-5level %logger [%M] %message%newline" />
+    </layout>
+  </appender>
+    <appender name="Log1FileAppender" type="log4net.Appender.RollingFileAppender">
+      <param name="File" value="E:\\Log1log.txt" />
+      <param name="AppendToFile" value="true" />
+      <param name="RollingStyle" value="Size" />
+      <param name="MaxSizeRollBackups" value="10" />
+      <param name="MaxFileSize" value="10240" />
+      <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+      <param name="StaticLogFileName" value="true" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="[%date] %thread %-5level %logger [%M] %message%newline" />
+      </layout>
+    </appender>
+    <appender name="Log2FileAppender" type="log4net.Appender.RollingFileAppender">
+      <param name="File" value="E:\\Log2log.txt" />
+      <param name="AppendToFile" value="true" />
+      <param name="RollingStyle" value="Size" />
+      <param name="MaxSizeRollBackups" value="10" />
+      <param name="MaxFileSize" value="10240" />
+      <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+      <param name="StaticLogFileName" value="true" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="[%date] %thread %-5level %logger [%M] %message%newline" />
+      </layout>
+    </appender>
+    <appender name="Log3FileAppender" type="log4net.Appender.RollingFileAppender">
+      <param name="File" value="E:\\Log3log.txt" />
+      <param name="AppendToFile" value="true" />
+      <param name="RollingStyle" value="Size" />
+      <param name="MaxSizeRollBackups" value="10" />
+      <param name="MaxFileSize" value="10240" />
+      <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+      <param name="StaticLogFileName" value="true" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="[%date] %thread %-5level %logger [%M] %message%newline" />
+      </layout>
+    </appender>
+    <appender name="ErrorLogFileAppender" type="log4net.Appender.RollingFileAppender">
+      <param name="File" value="E:\\ErrorLog.txt" />
+      <param name="AppendToFile" value="true" />
+      <param name="RollingStyle" value="Size" />
+      <param name="MaxSizeRollBackups" value="10" />
+      <param name="MaxFileSize" value="10240" />
+      <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+      <param name="StaticLogFileName" value="true" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="[%date] %thread %-5level %logger [%M] %message%newline" />
+      </layout>
+      <filter type="log4net.Filter.LevelRangeFilter">
+        <levelMin value="ERROR" />
+        <levelMax value="FATAL" />
+      </filter>
+    </appender>
+
+  </log4net>
+</configuration>

@@ -1,0 +1,365 @@
+﻿@{
+    Layout = null;//"~/Views/Shared/_Layout_Query.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="../Content/css/main.css" rel="stylesheet" type="text/css">
+    <!---->
+    <link href="../Content/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" />
+    <script src="../Content/jquery/jquery-1.10.2.min.js"></script>
+    <script src="../Content/jquery-ui/jquery-ui-1.9.2.custom.min.js"></script>
+    <!--<script src="../Content/bootstrap/bootstrap-paginator.js"></script>-->
+    <script src="../Content/js/dialog_msg.js"></script>
+    <script src="../Content/js/jqueryPlugin.js"></script>
+    <script>
+        $.ajaxSetup({
+            cache: false
+        });
+        $(document).ready(function () {
+            $('#modelDialog').searchDialog({
+                searchDialogId: 'searchDialog1',
+                target: 'modelCode',
+                targetId: 'modelCodeSelected',
+                clickCallback: function (frameId) {
+                    var url = '../Common/ModelQuery';
+                    if ($("#modelCode").val() != undefined && $("#modelCode").val() != "") {
+                        url = url + "?modelCode=" + $("#modelCode").val();
+                    }
+                    $('#' + frameId).attr("src", url);
+                },
+                okButtonCallback: function (frameId) {
+                    var obj = $('#' + frameId).contents().find(
+                        'input:radio[name=id]:checked');
+                    if (obj.length > 0) {
+                        var v1 = $("iframe").contents().find('input:radio[name=id]:checked').val();
+                        var content = v1.split("-");
+                        $('#modelCode').val(content[0]);
+                        $('#modelCodeSelected').val(content[0]);
+                        $("#colorDialog").css("display", "");
+                        $("#interiorDialog").css("display", "");
+                    } else {
+                        $('#modelCode').val('');
+                        $('#modelCodeSelected').val('');
+                    }
+                }
+            });
+            $('#colorDialog').searchDialog({
+                searchDialogId: 'searchDialog2',
+                target: 'color',
+                targetId: 'color',
+                clickCallback: function (frameId) {
+                    var url = '../Common/ColorQuery?modelCode=' + $("#modelCode").val();
+                    if ($("#color").val() != undefined && $("#color").val() != "") {
+                        url = url + "&color=" + $("#color").val();
+                    }
+                    $('#' + frameId).attr("src", url);
+                },
+                okButtonCallback: function (frameId) {
+                    var obj = $('#' + frameId).contents().find(
+                        'input:radio[name=id]:checked');
+                    if (obj.length > 0) {
+                        var v1 = $("iframe").contents().find('input:radio[name=id]:checked').val();
+                        var content = v1.split("-");
+                        $('#color').val(content[0]);
+                    } else {
+                        $('#color').val('');
+                    }
+                }
+            });
+            $('#interiorDialog').searchDialog({
+                searchDialogId: 'searchDialog3',
+                target: 'interior',
+                targetId: 'interior',
+                clickCallback: function (frameId) {
+                    var url = '../Common/InteriorQuery?modelCode=' + $("#modelCode").val();
+                    if ($("#interior").val() != undefined && $("#interior").val() != "") {
+                        url = url + "&interior=" + $("#interior").val();
+                    }
+                    $('#' + frameId).attr("src", url);
+                },
+                okButtonCallback: function (frameId) {
+                    var obj = $('#' + frameId).contents().find(
+                        'input:radio[name=id]:checked');
+                    if (obj.length > 0) {
+                        var v1 = $("iframe").contents().find('input:radio[name=id]:checked').val();
+                        var content = v1.split("-");
+                        $('#interior').val(content[0]);
+                    } else {
+                        $('#interior').val('');
+                    }
+                }
+            });
+            $("#startDateOutStock,#endDateOutStock,#startDateCreate,#endDateCreate,#startDateInvoice,#endDateInvoice").datepicker({
+                dateFormat: 'yy-mm-dd',
+                clearText: '清除',
+                closeText: '关闭',
+                prevText: '前一月',
+                nextText: '后一月',
+                currentText: '今天',
+                monthNames: ['1月', '2月', '3月',
+                    '4月', '5月', '6月', '7月',
+                    '8月', '9月', '10月', '11月',
+                    '12月'],
+                monthNamesShort: ['一月', '二月', '三月',
+                    '四月', '五月', '六月', '七月',
+                    '八月', '九月', '十月', '十一月',
+                    '十二月'],
+                dayNamesMin: ['日', '一', '二', '三', '四', '五', '六'],
+                yearRange: '-3:+0',
+                beforeShow: customRange,
+                showOn: "both",
+                buttonImage: "../Content/images/calendar.gif",
+                buttonImageOnly: true,
+                showButtonPanel: true,
+                showClearButton: true,
+                changeYear: true,
+                changeMonth: true
+            });
+            /*$('.ui-datepicker-controls').css('display', '');
+            $("#btnReturn").attr("disabled", "disabled");*/
+            $("#colorDialog").css("display", "none");
+            $("#interiorDialog").css("display", "none");
+            initDate();
+        });
+        function customRange(input) {
+            return {
+                minDate: (input.id == "endDate" ? $("#startDate").datepicker(
+                    "getDate") : null),
+                maxDate: (input.id == "startDate" ? $("#endDate").datepicker(
+                    "getDate") : null)
+            };
+        };
+        function initDate() {
+            var mydate = new Date();
+            if (mydate.getMonth() < 10) {
+                var startDate = mydate.getFullYear() + "-0" + (mydate.getMonth() + 1) + "-01";
+                var endDate = mydate.getFullYear() + "-0" + (mydate.getMonth() + 1) + "-" + mydate.getDate();
+            } else {
+                var startDate = mydate.getFullYear() + "-" + (mydate.getMonth() + 1) + "-01";
+                var currDate = mydate.getFullYear() + "-" + (mydate.getMonth() + 1) + "-" + mydate.getDate();
+            }
+            $("#startDateCreate").val(startDate);
+            $("#endDateCreate").val(endDate);
+        };
+        function f_getModelInfo() {
+            var modelCode = $('#modelCode').val();
+            if (modelCode.length == 6) {
+                $.ajax({
+                    type: "post",
+                    url: "/Common/GetModelInfo",
+                    data: { "modelCode": modelCode },
+                    dataType: "Text",
+                    success: function (data) {
+                        if (data.length == 0) {
+                            $("#modelCodeSelected").val("");
+                        } else {
+                            var jsondata = JSON.parse(data);
+                            $("#modelCodeSelected").val(jsondata.ModelCode);
+                            $("#colorDialog").css("display", "");
+                            $("#interiorDialog").css("display", "");
+                        }
+                    }
+                });
+            }
+        };
+        function f_search() {
+            openDialog();
+            $("#content").load(
+                "RetailOrderQueryList?" + $("#form").serialize(), function (data) {
+                    closeDialog();
+                });
+        };
+        function f_next() {
+            $("#startIndex").val(Number($("#startIndex").val()) + Number($("#pageSize").val()));
+            //alert($("#pageIndex").val());
+            f_search();
+        };
+        function f_previous() {
+            $("#startIndex").val(Number($("#startIndex").val()) - Number($("#pageSize").val()));
+            f_search();
+        };
+        function f_details(orderNo) {
+            /*$("#content").load(
+                "RetailOrderQueryDetails?ajax=true&orderNo=" + orderNo, function (data) {
+                });*/
+            $.ajax({
+                type: "post",
+                url: "/RetailQuery/RetailOrderQueryDetails",
+                data: { "orderNo": orderNo },
+                dataType: "Text",
+                async: false,
+                success: function (data) {
+                    $("#content").html(data);
+                }
+            });
+            $("#btnReturn").removeAttr("disabled", "disabled");
+        };
+        function f_reset() {
+            $('#form')[0].reset();
+            initDate();
+        }
+        function f_return() {
+            $("#content").load(
+                "RetailOrderQueryList?returnFlag=true", function (data) {
+                });
+            $("#btnReturn").attr("disabled", "disabled");
+        };
+        function f_export() {
+            var fal = confirm('是否确定导出?');
+            if (fal) {
+                var frm = document.forms['form'];
+                window.location.href = "RetailOrderQueryExport?"
+                    + $("#form").serialize();
+            }
+        }
+        //window.onload = f_search;
+        function f_search1() {
+            openDialog();
+            $.ajax({
+                type: "post",
+                url: "/RetailQuery/RetailOrderQueryResult?",
+                data: { "a": "b" },
+                dataType: "Text",
+                success: function (data) {
+                    closeDialog();
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+    <div id="dialog" title="提示">
+        查询中，请等待...
+    </div>
+    
+    <div class="right">
+        <div class="table">
+            <form id="form" name="form" theme="simple" method="post">
+                <span id="title" class="title">零售信息查询</span>
+                <input type="hidden" id="userType" name="userType" value="" />
+                <input type="hidden" id="startIndex" name="startIndex" value="0" />
+                <input type="hidden" id="pageSize" name="pageSize" value="10" />
+                <input type="hidden" id="modelCodeSelected" name="modelCodeSelected" value="" />
+                <table style="border:0;width:100%;" id="t1">
+                    <tr>
+                        <td class="arrow">车型:</td>
+                        <td>
+                            <input name="modelCode" id="modelCode" type="text" size="6" maxlength="6" value="" onblur="f_getModelInfo()" />
+                            <img src="../Content/images/i_search.gif" id="modelDialog" width="22"
+                                 height="20" border="0" name="modelCodeSelect" style="cursor: pointer;" />
+                            <span id="modelCode_error"></span>
+                        </td>
+                        <td class="arrow">颜色代码:</td>
+                        <td>
+                            <input name="color" id="color" type="text" size="4" maxlength="4" value="" />
+                            <img src="../Content/images/i_search.gif" id="colorDialog" width="22"
+                                 height="20" border="0" name="colorSelect" style="cursor: pointer;" />
+                        </td>
+                        <td class="arrow">内饰:</td>
+                        <td>
+                            <input name="interior" id="interior" type="text" size="2" maxlength="2" value="" />
+                            <img src="../Content/images/i_search.gif" id="interiorDialog" width="22"
+                                 height="20" border="0" name="interiorSelect" style="cursor: pointer;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="arrow">客户名称:</td>
+                        <td>
+                            <input name="customerName" id="customerName" type="text" size="12" maxlength="20" value="" />
+                        </td>
+
+                        <td class="arrow">发票号码:</td>
+                        <td>
+                            <input name="invoiceNo" id="invoiceNo" type="text" size="20" maxlength="20" value="" />
+                        </td>
+                        <td class="arrow">VIN码:</td>
+                        <td>
+                            <input name="vin" id="vin" type="text" size="17" maxlength="17" value="" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="arrow">发动机号:</td>
+                        <td>
+                            <input name="engineNo" id="engineNo" type="text" size="7" maxlength="7" value="" />
+                        </td>
+                        <td class="arrow">出库日期:</td>
+                        <td>
+                            <input name="startDateOutStock" id="startDateOutStock" type="text" size="10" maxlength="10" value="" align="right" />
+                        </td>
+                        <td class="arrow">到</td>
+                        <td>
+                            <input name="endDateOutStock" id="endDateOutStock" type="text" size="10" maxlength="10" value="" align="right" />
+                        </td>
+                    </tr>
+                    <tr>
+                    <tr>
+                        <td class="arrow">销售来源:</td>
+                        <td>
+                            <select size="1" name="saleSource">
+                                <option value="" selected="selected">&nbsp;</option>
+                                <option value="A">录入零售</option>
+                                <option value="B">提单零售</option>
+                                <option value="C">意向订单零售</option>
+                            </select>
+                        </td>
+                        <td class="arrow">登记日期:</td>
+                        <td>
+                            <input name="startDateCreate" id="startDateCreate" type="text" size="10" maxlength="10" value="" align="right" />
+                        </td>
+                        <td class="arrow">到</td>
+                        <td>
+                            <input name="endDateCreate" id="endDateCreate" type="text" size="10" maxlength="10" value="" align="right" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="arrow">出库状态:</td>
+                        <td>
+                            <select size="1" name="outStockStatus">
+                                <option value="" selected="selected">&nbsp;</option>
+                                <option value="Y">已出库</option>
+                                <option value="N">未出库</option>
+                            </select>
+                        </td>
+                        <td class="arrow">发票日期:</td>
+                        <td>
+                            <input name="startDateInvoice" id="startDateInvoice" type="text" size="10" maxlength="10" value="" align="right" />
+                        </td>
+                        <td class="arrow">到</td>
+                        <td>
+                            <input name="endDateInvoice" id="endDateInvoice" type="text" size="10" maxlength="10" value="" align="right" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="arrow">销售状态:</td>
+                        <td>
+                            <select size="1" name="saleStatus">
+                                <option value="">&nbsp;</option>
+                                <option value="Y" selected="selected">有效</option>
+                                <option value="S">作废</option>
+                            </select>
+                        </td>
+                        <td class="arrow">是否查询备注后信息:</td>
+                        <td>
+                            <select size="1" name="remark">
+                                <option value="N">否</option>
+                                <option value="Y">是</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="line"></div>
+                <input type="button" id="btnSearch" name="btnSearch" class="button2" value="查询" onclick="f_search()" />
+                <input type="button" id="btnExport" name="btnExport" class="button2" value="导出" onclick="f_export()" />
+                <input type="button" id="btnReset" name="btnReset" class="button2" value="重置" onclick="f_reset()" />
+                <input type="button" id="btnReturn" name="btnReturn" class="button2" value="返回" onclick="f_return()" />
+            </form>
+        </div>
+        <div id="content">
+        </div>
+    </div>
+</body>
+</html>

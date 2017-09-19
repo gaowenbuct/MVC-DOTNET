@@ -1,0 +1,45 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Switch</title>
+    <link href="../Content/css/main.css" rel="stylesheet" type="text/css">
+<script>
+    function switchSysBar(){
+	 if (parent.document.getElementById('attachucp').cols=="208,10,*"){
+	 document.getElementById('leftbar').style.display="";
+	 parent.document.getElementById('attachucp').cols="0,10,*";
+	 }
+	 else{
+	 parent.document.getElementById('attachucp').cols="208,10,*";
+	 document.getElementById('leftbar').style.display="none"
+	 }
+	}
+	function load(){
+	 if (parent.document.getElementById('attachucp').cols=="0,10,*"){
+	 document.getElementById('leftbar').style.display="";
+	 }
+	}
+</script>
+</head>
+<body onload="load()">
+    <center>
+        <table height="100%" cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+                <td id="leftbar" style="display: none;">
+                    <a onClick="switchSysBar()" href="javascript:void(0);"><img height="90" border="0" width="9" alt="展开左侧菜单" src="../Content/images/pic24.gif" /></a>
+                </td>
+                <td id="rightbar">
+                    <a onClick="switchSysBar()" href="javascript:void(0);"><img height="90" border="0" width="9" alt="隐藏左侧菜单" src="../Content/images/pic23.gif" /></a>
+                </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>
