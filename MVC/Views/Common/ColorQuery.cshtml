@@ -4,7 +4,7 @@
 }
 
 @{
-    List<Color> list = ViewData["colorList"] as List<Color>;
+    //IDictionary<string ,string> list = ViewData["colorList"] as IDictionary<string, string>;
 }
 <html>
 <head>
@@ -12,26 +12,37 @@
     <script src="../Content/jquery/jquery-1.10.2.min.js"></script>
     <script>
     function f_search(){
+        if ($("#colorCode").val() !== "" && $("#colorName").val() !== "") {
+            alert("不能同时根据代码和名称进行查询");
+            return;
+        };
         $.ajax({
             type: "post",
             url: "ColorQuerySearch",
-            data: { "modelCode": $("#modelCode").val(), "color": $("#color").val() },
+            data: { "modelCode": $("#modelCode").val(), "colorCode": $("#colorCode").val().toUpperCase(), "colorName": $("#colorName").val() },
             dataType: "Text",
             async: false,
             success: function (data) {
-                $("#colorList tr:gt(0)").remove();
+                $("#list tr:gt(0)").remove();
                 //var jsondata = JSON.parse(data);
                 var jsondata = $.parseJSON(data);
-                $.each(jsondata, function (i, item) {
-                    $("#colorList").append(
+                /*$.each(jsondata, function (i, item) {
+                    $("#list").append(
                         "<tr><td><input type='radio' name='id' value='" + item.ColorCode+"' class='check'></input></td><td>" +
                         item.ColorCode + "</td><td>" + item.ColorName + "</td></tr>");
-                });
+                });*/
+                for (var key in jsondata) {
+                    $("#list").append(
+                        "<tr><td><input type='radio' name='id' value='" + key + "' class='check'></input></td><td>" +
+                        key + "</td><td>" + jsondata[key] + "</td></tr>");
+                }
+
             }
         });
     }
     function f_reset() {
-        $("#color").val("");
+        $("#colorCode").val("");
+        $("#colorName").val("");
     }
     </script>
 </head>
@@ -43,13 +54,17 @@
                        class="formTable">
                     <tbody>
                         <tr>
-                            <th width="100" height="30">车型代码：</th>
+                            <!--<th width="100" height="30">车型代码：</th>
                             <td width="200">
                                 <input name="modelCode" type="text" id="modelCode" value="@ViewData["modelCode"]" size="6" disabled="disabled">
-                            </td>
+                            </td>-->
                             <th width="100" height="30">颜色代码：</th>
                             <td width="100">
-                                <input name="color" type="text" id="color" value="@ViewData["color"]" size="4">
+                                <input name="colorCode" type="text" id="colorCode" value="@ViewData["colorCode"]" size="2">
+                            </td>
+                            <th width="100" height="30">颜色名称：</th>
+                            <td width="100">
+                                <input name="colorName" type="text" id="colorName" value="" size="6">
                             </td>
                             <td width="100">
                                 <input type="button" id="btnQuery" name="btnQuery" class="button2" value="查询" onclick="f_search()" />
@@ -65,7 +80,7 @@
 
             <h2>查询列表</h2>
             <div id="content" class="table">
-                <table id="colorList" class="list" border="0" cellspacing="1" cellpadding="1">
+                <table id="list" class="list" border="0" cellspacing="1" cellpadding="1">
                     <tr>
                         <td width="50" align="left" class="tit">选择</td>
                         <td align="center" class="tit">颜色代码</td>

@@ -16,12 +16,17 @@ namespace MVC.Daos.OracleImpl
         {
             throw new NotImplementedException();
         }
-        public PageResult<T> nativeQuerySQL(string sql, string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
+        public PageResult<T> nativeQuerySql(string sql, string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
         {
             throw new NotImplementedException();
         }
 
-        public List<T> nativeQuerySQL(string sql, IDictionary<string, object> parms)
+        public List<T> nativeQuerySql(string sql, IDictionary<string, object> parms)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string nativeQuerySqlReturnString(string sql, IDictionary<string, object> parms)
         {
             throw new NotImplementedException();
         }

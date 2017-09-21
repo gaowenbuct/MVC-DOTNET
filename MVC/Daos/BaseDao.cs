@@ -8,8 +8,10 @@ namespace MVC.Daos
 {
     public interface BaseDao<T>
     {
-        PageResult<T> nativeQuerySQL(string sql,string sqlCount, IDictionary<string, object> parms,int startIndex,int pageSize);
-        List<T> nativeQuerySQL(string sql, IDictionary<string, object> parms);
+        PageResult<T> nativeQuerySql(string sql,string sqlCount, IDictionary<string, object> parms,int startIndex,int pageSize);
+        List<T> nativeQuerySql(string sql, IDictionary<string, object> parms);
+
+        string nativeQuerySqlReturnString(string sql, IDictionary<string, object> parms);
 
         //T FindByid(string tableName,string keyFieldName,long keyValue);
 

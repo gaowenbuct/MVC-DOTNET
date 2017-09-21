@@ -4,6 +4,7 @@ using System.Data;
 
 using System.Collections;
 using IBM.Data.DB2.iSeries;
+using System.Text;
 
 namespace MVC.Utils
 {
@@ -374,6 +375,34 @@ namespace MVC.Utils
                 trans.Rollback();
                 return 0;
             }
+        }
+        public static string GetPageSql(string selectFields,string orderField, string tableName,string condition,int startIndex,int pageSize)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT * FROM(SELECT ");
+            sb.Append(selectFields);
+            sb.Append(",ROW_NUMBER() OVER(ORDER BY ");
+            sb.Append(orderField);
+            sb.Append(" ASC) AS ROWNUM FROM ");
+            sb.Append(tableName);
+            sb.Append(" WHERE 1=1 ");
+            sb.Append(condition);
+            sb.Append(" FETCH FIRST ");
+            sb.Append((startIndex+ pageSize).ToString());
+            sb.Append(" ROWS ONLY) A WHERE ROWNUM>");
+            sb.Append(startIndex.ToString());
+            sb.Append(" AND ROWNUM<= ");
+            sb.Append((startIndex + pageSize).ToString());
+            return sb.ToString();
+        }
+        public static string GetCountSql(string tableName, string condition)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT COUNT(1) FROM ");
+            sb.Append(tableName);
+            sb.Append(" WHERE 1=1 ");
+            sb.Append(condition);
+            return sb.ToString();
         }
     }
 }

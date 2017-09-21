@@ -75,6 +75,7 @@
     <Compile Include="Services\Retail\Impl\RetailOrderServiceImplTests.cs" />
     <Compile Include="Services\Retail\Impl\RetailQueryServiceImplTests.cs" />
     <Compile Include="Services\System\Impl\UserServiceImplTests.cs" />
+    <Compile Include="Services\System\Impl\VmsUserServiceImplTests.cs" />
     <Compile Include="Utils\DB2HelperTests.cs" />
     <Compile Include="Utils\FileHelperTests.cs" />
   </ItemGroup>

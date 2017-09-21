@@ -42,19 +42,23 @@ namespace MVC.Daos.Db2Impl
             {
                 if (rdr.Read())
                 {
-                    T t = Activator.CreateInstance<T>();
-                    PropertyInfo[] propertyInfo = t.GetType().GetProperties();
-                    int i = 0;
-                    foreach (PropertyInfo pi in propertyInfo)
+                    list = new List<T>();
+                    do
                     {
-                        pi.SetValue(t, rdr.GetValue(i++));
-                    }
-                    list.Add(t);
+                        T t = Activator.CreateInstance<T>();
+                        PropertyInfo[] propertyInfo = t.GetType().GetProperties();
+                        int i = 0;
+                        foreach (PropertyInfo pi in propertyInfo)
+                        {
+                            pi.SetValue(t, rdr.GetValue(i++));
+                        }
+                        list.Add(t);
+                    } while (rdr.Read());
                 }
             }
             return list;
         }
-        public PageResult<T> nativeQuerySQL(string sql,string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
+        public PageResult<T> nativeQuerySql(string sql,string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
         {
             PageResult<T> pageResult = null;// new PageResult<T>();
             List<T> list = null;
@@ -65,7 +69,7 @@ namespace MVC.Daos.Db2Impl
                 foreach(var item in parms)
                 {
                     Debug.Assert(item.Value!=null);
-                    paramlist.Add(new iDB2Parameter(item.Key,item.Value));
+                    paramlist.Add(new iDB2Parameter('@' + item.Key,item.Value));
                 }
                 db2Parms = paramlist.ToArray();
             }
@@ -95,7 +99,7 @@ namespace MVC.Daos.Db2Impl
             return pageResult;
         }
 
-        public List<T> nativeQuerySQL(string sql, IDictionary<string, object> parms)
+        public List<T> nativeQuerySql(string sql, IDictionary<string, object> parms)
         {
             iDB2Parameter[] db2Parms = null;
             List<T> list = null;
@@ -105,7 +109,7 @@ namespace MVC.Daos.Db2Impl
                 foreach (var item in parms)
                 {
                     Debug.Assert(item.Value != null);
-                    parmsList.Add(new iDB2Parameter(item.Key, item.Value));
+                    parmsList.Add(new iDB2Parameter('@' + item.Key, item.Value));
                 }
                 db2Parms = parmsList.ToArray();
             }
@@ -128,6 +132,29 @@ namespace MVC.Daos.Db2Impl
                 }
             }
             return list;
+        }
+        public string nativeQuerySqlReturnString(string sql, IDictionary<string, object> parms)
+        {
+            string result = string.Empty;
+            iDB2Parameter[] db2Parms = null;
+            if (parms != null)
+            {
+                List<iDB2Parameter> parmsList = new List<iDB2Parameter>();
+                foreach (var item in parms)
+                {
+                    Debug.Assert(item.Value != null);
+                    parmsList.Add(new iDB2Parameter('@' + item.Key, item.Value));
+                }
+                db2Parms = parmsList.ToArray();
+            }
+            using (iDB2DataReader rdr = DB2Helper.ExecuteReader(DB2Helper.ConnectionString, CommandType.Text, sql, db2Parms))
+            {
+                if (rdr.Read())
+                {
+                    result = rdr.GetString(0);
+                }
+            }
+            return result;
         }
     }
 }

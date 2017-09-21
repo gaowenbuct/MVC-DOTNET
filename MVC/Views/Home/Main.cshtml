@@ -1,6 +1,28 @@
 ﻿@{
     Layout = null;
 }
+<script src="../Content/jquery/jquery-1.10.2.min.js"></script>
 <script>
-    location.href = '../RetailQuery/RetailOrderQuery';
+    //location.href = "../RetailQuery/RetailOrderQuery";
+    
+    $(document).ready(function () {
+        $('#mainForm').submit();
+    });
+    //document.getElementById("mainForm").submit();
 </script>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <form id="mainForm" name="mainForm" action="../RetailQuery/RetailOrderQuery" Method="post">
+        <input type="HIDDEN" name="AZMDWDM" value="08" />
+        <input type="HIDDEN" name="AZMPPDM" value="V" />
+        <input type="HIDDEN" name="AZMKHDM" value="" />
+        <input type="HIDDEN" name="AVSYHLX" value="Y" />
+        <input type='HIDDEN' name="AHDCZXM" value="PGMTF" />
+        <input type='HIDDEN' name="AEBPSWD" value="PPPPPP" />
+        <input type='HIDDEN' name="ALWEBQRYID" value="1234567890" />
+    </form>
+</body>
+</html>

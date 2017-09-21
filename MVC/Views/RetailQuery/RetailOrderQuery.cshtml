@@ -39,8 +39,8 @@
                         var content = v1.split("-");
                         $('#modelCode').val(content[0]);
                         $('#modelCodeSelected').val(content[0]);
-                        $("#colorDialog").css("display", "");
-                        $("#interiorDialog").css("display", "");
+                        //$("#colorDialog").css("display", "");
+                        //$("#interiorDialog").css("display", "");
                     } else {
                         $('#modelCode').val('');
                         $('#modelCodeSelected').val('');
@@ -49,12 +49,12 @@
             });
             $('#colorDialog').searchDialog({
                 searchDialogId: 'searchDialog2',
-                target: 'color',
-                targetId: 'color',
+                target: 'colorCode',
+                targetId: 'colorCode',
                 clickCallback: function (frameId) {
                     var url = '../Common/ColorQuery?modelCode=' + $("#modelCode").val();
-                    if ($("#color").val() != undefined && $("#color").val() != "") {
-                        url = url + "&color=" + $("#color").val();
+                    if ($("#colorCode").val() != undefined && $("#colorCode").val() != "") {
+                        url = url + "&colorCode=" + $("#color").val();
                     }
                     $('#' + frameId).attr("src", url);
                 },
@@ -64,20 +64,20 @@
                     if (obj.length > 0) {
                         var v1 = $("iframe").contents().find('input:radio[name=id]:checked').val();
                         var content = v1.split("-");
-                        $('#color').val(content[0]);
+                        $('#colorCode').val(content[0]);
                     } else {
-                        $('#color').val('');
+                        $('#colorCode').val('');
                     }
                 }
             });
             $('#interiorDialog').searchDialog({
                 searchDialogId: 'searchDialog3',
-                target: 'interior',
-                targetId: 'interior',
+                target: 'interiorCode',
+                targetId: 'interiorCode',
                 clickCallback: function (frameId) {
                     var url = '../Common/InteriorQuery?modelCode=' + $("#modelCode").val();
-                    if ($("#interior").val() != undefined && $("#interior").val() != "") {
-                        url = url + "&interior=" + $("#interior").val();
+                    if ($("#interiorCode").val() != undefined && $("#interiorCode").val() != "") {
+                        url = url + "&interiorCode=" + $("#interiorCode").val();
                     }
                     $('#' + frameId).attr("src", url);
                 },
@@ -87,9 +87,9 @@
                     if (obj.length > 0) {
                         var v1 = $("iframe").contents().find('input:radio[name=id]:checked').val();
                         var content = v1.split("-");
-                        $('#interior').val(content[0]);
+                        $('#interiorCode').val(content[0]);
                     } else {
-                        $('#interior').val('');
+                        $('#interiorCode').val('');
                     }
                 }
             });
@@ -121,8 +121,8 @@
             });
             /*$('.ui-datepicker-controls').css('display', '');
             $("#btnReturn").attr("disabled", "disabled");*/
-            $("#colorDialog").css("display", "none");
-            $("#interiorDialog").css("display", "none");
+            //$("#colorDialog").css("display", "none");
+            //$("#interiorDialog").css("display", "none");
             initDate();
         });
         function customRange(input) {
@@ -159,14 +159,75 @@
                         } else {
                             var jsondata = JSON.parse(data);
                             $("#modelCodeSelected").val(jsondata.ModelCode);
-                            $("#colorDialog").css("display", "");
-                            $("#interiorDialog").css("display", "");
+                            //$("#colorDialog").css("display", "");
+                            //$("#interiorDialog").css("display", "");
                         }
                     }
                 });
             }
         };
+        function dateValidate(date) {
+            if (date == "") {
+                return true;
+            };
+            var reg = /^(\d{4})-(\d{2})-(\d{2})$/;
+            if (reg.test(date)) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+        function dateValidateNull(date) {
+            if (date == "") {
+                return false;
+            };
+            if (date.length==0) {
+                return false;
+            };
+        };
+        function DateValidateDiff(date1, date2) {
+            if (date1 == "" || date2 == "") {
+                return false;
+            }
+            var aDate, oDate1, oDate2, iDays
+            aDate = date1.split("-")
+            oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0])
+            aDate = date2.split("-")
+            oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0])
+            iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24) 
+            if (iDays >= 0 && iDays <= 31) {
+                return true;
+            } else {
+                return false;
+            }
+        } 
         function f_search() {
+            if ($("#modelCode").val().length > 0 && $("#modelCode").val().length < 6) {
+                alert("车型代码输入不完整");
+                return;
+            }
+            if ($("#modelCode").val().length == 6&&$("#modelCodeSelected").val() == "") {
+                alert("车型代码不正确");
+                return;
+            };
+            if (!(dateValidate($("#startDateOutStock").val()) && dateValidate($("#endDateOutStock").val()) &&
+                dateValidate($("#startDateCreate").val()) && dateValidate($("#endDateCreate").val()) &&
+                dateValidate($("#startDateInvoice").val()) && dateValidate($("#endDateInvoice").val()))) {
+                alert("日期格式不正确"); 
+                return;
+            };
+            if (((dateValidateNull($("#startDateOutStock").val()) && dateValidateNull($("#endDateOutStock").val())) ||
+                (dateValidateNull($("#startDateCreate").val()) && dateValidateNull($("#endDateCreate").val())) ||
+                (dateValidateNull($("#startDateInvoice").val()) && dateValidateNull($("#endDateInvoice").val())))) {
+                alert("请至少输入一对日期条件");
+                return;
+            };
+            if (!(DateValidateDiff($("#startDateOutStock").val(), $("#endDateOutStock").val()) ||
+                DateValidateDiff($("#startDateCreate").val(), $("#endDateCreate").val()) ||
+                DateValidateDiff($("#startDateInvoice").val(), $("#endDateInvoice").val()))) {
+                alert("日期区间必须小于31天");
+                return;
+            };
             openDialog();
             $("#content").load(
                 "RetailOrderQueryList?" + $("#form").serialize(), function (data) {
@@ -241,8 +302,11 @@
             <form id="form" name="form" theme="simple" method="post">
                 <span id="title" class="title">零售信息查询</span>
                 <input type="hidden" id="userType" name="userType" value="" />
-                <input type="hidden" id="startIndex" name="startIndex" value="0" />
-                <input type="hidden" id="pageSize" name="pageSize" value="10" />
+                <input type="hidden" id="username" name="username" value="@ViewData["username"]" />
+                <input type="hidden" id="dealerCode" name="dealerCode" value="@ViewData["dealerCode"]" />
+                <input type="hidden" id="regionCode" name="regionCode" value="@ViewData["regionCode"]" />
+                <input type="hidden" id="startIndex" name="startIndex" value="@ViewData["startIndex"]" />
+                <input type="hidden" id="pageSize" name="pageSize" value="@ViewData["pageSize"]" />
                 <input type="hidden" id="modelCodeSelected" name="modelCodeSelected" value="" />
                 <table style="border:0;width:100%;" id="t1">
                     <tr>
@@ -255,15 +319,15 @@
                         </td>
                         <td class="arrow">颜色代码:</td>
                         <td>
-                            <input name="color" id="color" type="text" size="4" maxlength="4" value="" />
+                            <input name="colorCode" id="colorCode" type="text" size="2" maxlength="2" value="" />
                             <img src="../Content/images/i_search.gif" id="colorDialog" width="22"
-                                 height="20" border="0" name="colorSelect" style="cursor: pointer;" />
+                                 height="20" border="0" name="colorCodeSelect" style="cursor: pointer;" />
                         </td>
                         <td class="arrow">内饰:</td>
                         <td>
-                            <input name="interior" id="interior" type="text" size="2" maxlength="2" value="" />
+                            <input name="interiorCode" id="interiorCode" type="text" size="2" maxlength="2" value="" />
                             <img src="../Content/images/i_search.gif" id="interiorDialog" width="22"
-                                 height="20" border="0" name="interiorSelect" style="cursor: pointer;" />
+                                 height="20" border="0" name="interiorCodeSelect" style="cursor: pointer;" />
                         </td>
                     </tr>
                     <tr>

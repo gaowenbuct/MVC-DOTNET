@@ -22,8 +22,8 @@ namespace MVC.Services.Retail.Impl.Tests
         {
             NameValueCollection nvc = new NameValueCollection();
             nvc.Add("a", "b");
-            nvc.Add("startIndex", "20");
-            nvc.Add("pageSize", "10");
+            nvc.Add("startIndex", "0");
+            nvc.Add("pageSize", "3");
             QueryCriteria queryCriteria = new QueryCriteria(nvc);
             PageResult<RetailOrderQueryVo> result=retailQueryService.doFindRetailOrderByCondition(queryCriteria);
         }

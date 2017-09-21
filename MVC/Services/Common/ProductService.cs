@@ -8,10 +8,14 @@ namespace MVC.Services.Common
 {
     public interface ProductService:BaseService
     {
-        List<Series> doFindAllSeries();
+        List<Series> doFindSeriesAll();
+        List<Color> doFindColorAll();
+        List<Interior> doFindInteriorAll();
         List<Model> doFindModel(string seriesCode,string modelCode);
-        List<Color> doFindColor(string modelCode,string color);
-        List<Interior> doFindInterior(string modelCode,string interior);
+        List<Color> doFindModelColor(string modelCode,string color);
+        List<Interior> doFindModelInterior(string modelCode,string interior);
         Model doGetModelInfo(string modelCode);
+        IDictionary<string, string> doFindColorList(string colorCode, string colorName);
+        IDictionary<string, string> doFindInteriorList(string interiorCode, string interiorName);
     }
 }

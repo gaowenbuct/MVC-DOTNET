@@ -11,17 +11,12 @@ namespace MVC.Utils
     {
         private int startIndex = 0;
         private int pageSize = 10;
-        private string orderField = "";
-        private string orderDirection = "ASC";
-        //private IDictionary<string, object> queryCondition = new Dictionary<string, object>();
-        private NameValueCollection queryCondition = null; //new NameValueCollection();
+        private NameValueCollection queryCondition = null; 
 
         public int StartIndex { get { return startIndex; } set { startIndex = value; } }
         public int PageSize { get { return pageSize; } set { pageSize = value; } }
-        public string OrderField { get { return orderField; } set { orderField = value; } }
-        public string OrderDirection { get { return orderDirection; } set { orderDirection = value; } }
 
-        public NameValueCollection QueryCondition { get ; set; }
+        public NameValueCollection QueryCondition { get { return queryCondition; }  set { queryCondition=value; } }
 
         public QueryCriteria(NameValueCollection queryString)
         {
@@ -34,12 +29,6 @@ namespace MVC.Utils
             {
                 this.pageSize = Convert.ToInt32(queryString["pageSize"]);
             }
-        }
-        public void reset()
-        {
-            this.startIndex = 0;
-            this.orderField = null;
-            this.queryCondition.Clear();
         }
     }
 }

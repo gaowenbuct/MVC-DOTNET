@@ -173,6 +173,7 @@
     <Compile Include="App_Start\MyViewEngine.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Cache\CommonCache.cs" />
     <Compile Include="Controllers\CommonController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RetailQueryController.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="Models\Common\Model.cs" />
     <Compile Include="Models\Common\Series.cs" />
     <Compile Include="Models\Retail\RetailOrder.cs" />
+    <Compile Include="Models\System\DealerUser.cs" />
     <Compile Include="Models\System\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BaseService.cs" />
@@ -209,8 +211,10 @@
     <Compile Include="Services\Retail\Vo\RetailOrderQueryVo.cs" />
     <Compile Include="Services\System\Impl\UserApiServiceImpl.cs" />
     <Compile Include="Services\System\Impl\UserServiceImpl.cs" />
+    <Compile Include="Services\System\Impl\DealerUserServiceImpl.cs" />
     <Compile Include="Services\System\UserApiService.cs" />
     <Compile Include="Services\System\UserService.cs" />
+    <Compile Include="Services\System\DealerUserService.cs" />
     <Compile Include="Utils\Db2Helper.cs" />
     <Compile Include="Utils\FileHelper.cs" />
     <Compile Include="Utils\OracleHelper.cs" />

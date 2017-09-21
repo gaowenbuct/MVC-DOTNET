@@ -19,7 +19,7 @@ namespace MVC.Services.Common.Impl.Tests
         public void doFindAllSeriesTest()
         {
             ProductService service = new ProductServiceImpl();
-            service.doFindAllSeries();
+            service.doFindSeriesAll();
         }
         [TestMethod()]
         public void initData()
@@ -30,8 +30,7 @@ namespace MVC.Services.Common.Impl.Tests
             for (int i = 0; i <= 20; i++)
             {
                 vo = new Series();
-                vo.SeriesId = i;
-                vo.SeriesCode = i.ToString()+i.ToString();
+                vo.SeriesCode = i.ToString() + i.ToString();
                 vo.SeriesName = i.ToString() + i.ToString() + i.ToString();
                 list.Add(vo);
             }
@@ -41,6 +40,22 @@ namespace MVC.Services.Common.Impl.Tests
                 sw.Write(JsonConvert.SerializeObject(list));
             }
             return;
+        }
+
+        [TestMethod()]
+        public void doGetModelInfoTest()
+        {
+            ProductService service = new ProductServiceImpl();
+            Model model = service.doGetModelInfo("A422H2");
+            Assert.IsNotNull(model);
+        }
+
+        [TestMethod()]
+        public void doFindModelTest()
+        {
+            ProductService service = new ProductServiceImpl();
+            List<Model> list = service.doFindModel("16","02");
+            Assert.IsNotNull(list);
         }
     }
 }

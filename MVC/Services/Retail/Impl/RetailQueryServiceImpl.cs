@@ -11,32 +11,85 @@ namespace MVC.Services.Retail.Impl
 {
     public class RetailQueryServiceImpl : BaseServiceImpl, RetailQueryService
     {
+        private static readonly BaseDao<RetailOrderQueryVo> baseDao = DaoFactory<RetailOrderQueryVo>.CreateBaseDao(typeof(RetailOrderQueryVo));
         public PageResult<RetailOrderQueryVo> doFindRetailOrderByCondition(QueryCriteria criteria)
         {
             PageResult<RetailOrderQueryVo> result = null;
-            BaseDao<RetailOrderQueryVo> baseDao = DaoFactory<RetailOrderQueryVo>.CreateBaseDao(typeof(RetailOrderQueryVo));
+            Dictionary<string, object> parms = new Dictionary<string, object>();
 
-            String sql = "SELECT '1' AS Vin,'1' AS OrderNo,'1' AS RetailTime,'1' AS OutStockDate,'1' AS InvoiceDate," +
-                "'1' AS ModelCode,'1' AS Color,'1' AS ModelYear,'1' AS ModelVersion,'1' AS Interior,'1' AS PrList," +
-                "'1' AS CustomerName,'1' AS SaleSource,'1' AS OrderStatus,'1' AS Accessory,'1' AS Club" +
-                " FROM RETAIL_ORDER";// WHERE ORDER_NO=@ORDER_NO";
-            string sqlCount = "SELECT COUNT(1) FROM RETAIL_ORDER";
-            IDictionary<string, object> parms = null;
+            string selectFields = "ID AS Vin,ID AS OrderNo,ID AS RetailTime,ID AS OutStockDate,ID AS InvoiceDate," +
+                "ID AS ModelCode,ID AS Color,ID AS ModelYear,ID AS ModelVersion,ID AS Interior,ID AS PrList," +
+                "ID AS CustomerName,ID AS SaleSource,ID AS OrderStatus,ID AS Accessory,ID AS Club";
+            string orderField = "VSLSDD";
+            string tableName = "SJVDTALIB.IST15 RETAIL_ORDER";
 
-            /*if (criteria.QueryCondition.Count > 0)
+            string condition = "AND ZMDWDM='08' AND ZMKHDM=@DEALER_CODE AND ZMFXDM=@REGION_CODE ";
+            parms.Add("DEALER_CODE", criteria.QueryCondition["dealerCode"]);
+            parms.Add("REGION_CODE", criteria.QueryCondition["regionCode"]);
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["modelCode"]))
             {
-                parms = new Dictionary<string, object>();
-                if(!string.IsNullOrWhiteSpace(criteria.QueryCondition["ORDER_NO"]))
-                parms.Add("ORDER_NO", criteria.QueryCondition["ORDER_NO"]);
-            }*/
+                condition += "AND BSCLDM=@MODEL_CODE ";
+                parms.Add("MODEL_CODE", criteria.QueryCondition["modelCode"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["colorCode"]))
+            {
+                condition += "AND XSYSDM=@COLOR_CODE ";
+                parms.Add("COLOR_CODE", criteria.QueryCondition["colorCode"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["interiorCode"]))
+            {
+                condition += "AND BSNSYM=@INTERIOR_CODE ";
+                parms.Add("INTERIOR_CODE", criteria.QueryCondition["interiorCode"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["customerName"]))
+            {
+                condition += "AND LOCATE(@INTERIOR_CODE,VSYHMC)>0 ";
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["vin"]))
+            {
+                condition += "AND CYVINM=@VIN ";
+                parms.Add("VIN", criteria.QueryCondition["vin"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["invoiceNo"]))
+            {
+                condition += "AND DMFPHM=@INVOICE_NO ";
+                parms.Add("INVOICE_NO", criteria.QueryCondition["invoiceNo"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["saleSource"]))
+            {
+                condition += "AND VSXSLY=@SALE_SOURCE ";
+                parms.Add("SALE_SOURCE", criteria.QueryCondition["saleSource"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["saleStatus"]))
+            {
+                condition += "AND VSDDZT=@SALE_STATUS ";
+                parms.Add("SALE_STATUS", criteria.QueryCondition["saleStatus"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["outStockStatus"]))
+            {
+                condition += "AND VSPCCL=@OUTSTOCK_STATUS ";
+                parms.Add("OUTSTOCK_STATUS", criteria.QueryCondition["outStockStatus"]);
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["startDateCreate"]))
+            {
+                condition += "AND VSDJRQ>=@START_DATE_CREATE ";
+                parms.Add("START_DATE_CREATE", long.Parse(criteria.QueryCondition["startDateCreate"].ToString().Replace("-","")));
+            }
+            if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["endDateCreate"]))
+            {
+                condition += "AND VSDJRQ<=@END_DATE_CREATE ";
+                parms.Add("END_DATE_CREATE", long.Parse(criteria.QueryCondition["endDateCreate"].ToString().Replace("-", "")));
+            }
 
-            result = baseDao.nativeQuerySQL(sql, sqlCount, parms,criteria.StartIndex, criteria.PageSize); 
+            string sql = DB2Helper.GetPageSql(selectFields, orderField, tableName, condition, criteria.StartIndex, criteria.PageSize);
+            string sqlCount = DB2Helper.GetCountSql(tableName,condition);
+
+            result = baseDao.nativeQuerySql(sql, sqlCount, parms,criteria.StartIndex, criteria.PageSize); 
             return result;
         }
         public List<RetailOrderQueryVo> doFindRetailOrderByCondition(NameValueCollection queryString)
         {
             List<RetailOrderQueryVo> result = null;
-            BaseDao<RetailOrderQueryVo> baseDao = DaoFactory<RetailOrderQueryVo>.CreateBaseDao(typeof(RetailOrderQueryVo));
 
             String sql = "SELECT '1' AS Vin,'1' AS OrderNo,'1' AS RetailTime,'1' AS OutStockDate,'1' AS InvoiceDate," +
                 "'1' AS ModelCode,'1' AS Color,'1' AS ModelYear,'1' AS ModelVersion,'1' AS Interior,'1' AS PrList," +
@@ -44,7 +97,7 @@ namespace MVC.Services.Retail.Impl
                 " FROM RETAIL_ORDER";
             IDictionary<string, object> parms = null;
 
-            result = baseDao.nativeQuerySQL(sql, parms);
+            result = baseDao.nativeQuerySql(sql, parms);
             return result;
         }
         public byte[] doExportRetailOrder(List<RetailOrderQueryVo> list)

@@ -49,7 +49,7 @@ namespace MVC.Daos.FileImpl
             }
             return list;
         }
-        public PageResult<T> nativeQuerySQL(string sql,string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
+        public PageResult<T> nativeQuerySql(string sql,string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
         {
             Debug.Assert(startIndex>=0);
             Debug.Assert(pageSize >= 10&& pageSize<=100);
@@ -76,7 +76,7 @@ namespace MVC.Daos.FileImpl
             return pageRsult;
         }
 
-        public List<T> nativeQuerySQL(string sql, IDictionary<string, object> parms)
+        public List<T> nativeQuerySql(string sql, IDictionary<string, object> parms)
         {
             List<T> list = null;
             using (StreamReader sr = new StreamReader(FileHelper.GetFileNameBySql(sql), Encoding.UTF8))
@@ -84,6 +84,11 @@ namespace MVC.Daos.FileImpl
                 list = JsonConvert.DeserializeObject<List<T>>(sr.ReadToEnd());
             }
             return list;
+        }
+
+        public string nativeQuerySqlReturnString(string sql, IDictionary<string, object> parms)
+        {
+            throw new NotImplementedException();
         }
     }
 }
