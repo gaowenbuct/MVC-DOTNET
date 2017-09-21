@@ -123,7 +123,8 @@
             $("#btnReturn").attr("disabled", "disabled");*/
             //$("#colorDialog").css("display", "none");
             //$("#interiorDialog").css("display", "none");
-            initDate();
+
+            //initDate();
         });
         function customRange(input) {
             return {
@@ -195,13 +196,13 @@
             aDate = date2.split("-")
             oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0])
             iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24) 
-            if (iDays >= 0 && iDays <= 31) {
+            if (iDays >= 0 && iDays <= 9931) {
                 return true;
             } else {
                 return false;
             }
         } 
-        function f_search() {
+        function search() {
             if ($("#modelCode").val().length > 0 && $("#modelCode").val().length < 6) {
                 alert("车型代码输入不完整");
                 return;
@@ -216,7 +217,7 @@
                 alert("日期格式不正确"); 
                 return;
             };
-            if (((dateValidateNull($("#startDateOutStock").val()) && dateValidateNull($("#endDateOutStock").val())) ||
+            /*if (((dateValidateNull($("#startDateOutStock").val()) && dateValidateNull($("#endDateOutStock").val())) ||
                 (dateValidateNull($("#startDateCreate").val()) && dateValidateNull($("#endDateCreate").val())) ||
                 (dateValidateNull($("#startDateInvoice").val()) && dateValidateNull($("#endDateInvoice").val())))) {
                 alert("请至少输入一对日期条件");
@@ -227,26 +228,26 @@
                 DateValidateDiff($("#startDateInvoice").val(), $("#endDateInvoice").val()))) {
                 alert("日期区间必须小于31天");
                 return;
-            };
+            };*/
             openDialog();
             $("#content").load(
                 "RetailOrderQueryList?" + $("#form").serialize(), function (data) {
                     closeDialog();
                 });
         };
+        function f_search() {
+            $("#startIndex").val("0");
+            search();
+        };
         function f_next() {
             $("#startIndex").val(Number($("#startIndex").val()) + Number($("#pageSize").val()));
-            //alert($("#pageIndex").val());
-            f_search();
+            search();
         };
         function f_previous() {
             $("#startIndex").val(Number($("#startIndex").val()) - Number($("#pageSize").val()));
-            f_search();
+            search();
         };
         function f_details(orderNo) {
-            /*$("#content").load(
-                "RetailOrderQueryDetails?ajax=true&orderNo=" + orderNo, function (data) {
-                });*/
             $.ajax({
                 type: "post",
                 url: "/RetailQuery/RetailOrderQueryDetails",
@@ -277,19 +278,6 @@
                     + $("#form").serialize();
             }
         }
-        //window.onload = f_search;
-        function f_search1() {
-            openDialog();
-            $.ajax({
-                type: "post",
-                url: "/RetailQuery/RetailOrderQueryResult?",
-                data: { "a": "b" },
-                dataType: "Text",
-                success: function (data) {
-                    closeDialog();
-                }
-            });
-        };
     </script>
 </head>
 <body>
@@ -400,7 +388,7 @@
                     <tr>
                         <td class="arrow">销售状态:</td>
                         <td>
-                            <select size="1" name="saleStatus">
+                            <select size="1" name="orderStatus">
                                 <option value="">&nbsp;</option>
                                 <option value="Y" selected="selected">有效</option>
                                 <option value="S">作废</option>

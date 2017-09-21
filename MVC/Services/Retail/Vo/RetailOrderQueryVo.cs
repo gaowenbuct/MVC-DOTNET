@@ -9,11 +9,12 @@ namespace MVC.Services.Retail.Vo
     {
         public string Vin { get; set; }
         public string OrderNo { get; set; }
-        public string RetailTime { get; set; }
+        public string RetailDateTime { get; set; }
         public string OutStockDate { get; set; }
         public string InvoiceDate { get; set; }
         public string ModelCode { get; set; }
         public string Color { get; set; }
+        public string VwColor { get; set; }
         public string ModelYear { get; set; }
         public string ModelVersion { get; set; }
         public string Interior { get; set; }

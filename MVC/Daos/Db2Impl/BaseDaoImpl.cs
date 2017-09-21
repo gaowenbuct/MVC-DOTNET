@@ -12,6 +12,7 @@ namespace MVC.Daos.Db2Impl
 {
     public class BaseDaoImpl<T> : BaseDao<T>
     {
+        protected static log4net.ILog log = log4net.LogManager.GetLogger("MVC.Daos.Db2Impl.BaseDaoImpl");
         public T FindByid(string sql, string parmName, string parmValue)
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(parmName));
@@ -37,12 +38,11 @@ namespace MVC.Daos.Db2Impl
         }
         public List<T> FindAll(string sql)
         {
-            List<T> list = null;
+            List<T> list = new List<T>();
             using (iDB2DataReader rdr = DB2Helper.ExecuteReader(DB2Helper.ConnectionString, CommandType.Text, sql))
             {
                 if (rdr.Read())
                 {
-                    list = new List<T>();
                     do
                     {
                         T t = Activator.CreateInstance<T>();
@@ -50,7 +50,14 @@ namespace MVC.Daos.Db2Impl
                         int i = 0;
                         foreach (PropertyInfo pi in propertyInfo)
                         {
-                            pi.SetValue(t, rdr.GetValue(i++));
+                            try
+                            {
+                                pi.SetValue(t, rdr.GetValue(i++));
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error("字段类型错误，" + pi.Name + ":" + ex.Message);
+                            }
                         }
                         list.Add(t);
                     } while (rdr.Read());
@@ -60,8 +67,8 @@ namespace MVC.Daos.Db2Impl
         }
         public PageResult<T> nativeQuerySql(string sql,string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
         {
-            PageResult<T> pageResult = null;// new PageResult<T>();
-            List<T> list = null;
+            List<T> list = list = new List<T>();
+            int count = 0;
             iDB2Parameter[] db2Parms=null;
             if (parms != null)
             {
@@ -73,14 +80,28 @@ namespace MVC.Daos.Db2Impl
                 }
                 db2Parms = paramlist.ToArray();
             }
-            int count=Convert.ToInt32(DB2Helper.ExecuteScalar(DB2Helper.ConnectionString, CommandType.Text, sqlCount, db2Parms));
+            try
+            {
+                count= Convert.ToInt32(DB2Helper.ExecuteScalar(DB2Helper.ConnectionString, CommandType.Text, sqlCount, db2Parms));
+            }
+            catch (Exception ex)
+            {
+                log.Error("SQL错误:" + ex.Message);
+                log.Error("SQL错误:" + sqlCount);
+                if (parms != null)
+                {
+                    log.Error("SQL错误:" + parms.toJson());
+                }
+                throw ex;
+            }
+
             if (count > 0)
             {
+                try { 
                 using (iDB2DataReader rdr = DB2Helper.ExecuteReader(DB2Helper.ConnectionString, CommandType.Text, sql, db2Parms))
                 {
                     if (rdr.Read())
                     {
-                        list= new List<T>();
                         do
                         {
                             T t = Activator.CreateInstance<T>();
@@ -88,21 +109,36 @@ namespace MVC.Daos.Db2Impl
                             int i = 0;
                             foreach (PropertyInfo pi in propertyInfo)
                             {
-                                pi.SetValue(t, rdr.GetValue(i++));
+                                try {
+                                    pi.SetValue(t, rdr.GetValue(i++));
+                                }catch(Exception ex)
+                                {
+                                    log.Error("字段类型错误，"+pi.Name+":"+ex.Message);
+                                }
                             }
                             list.Add(t);
                         } while (rdr.Read());
-                        pageResult = new PageResult<T>(startIndex,pageSize,count, list);
                     }
                 }
+                }
+                catch (Exception ex)
+                {
+                    log.Error("SQL错误:" + ex.Message);
+                    log.Error("SQL错误:" + sql);
+                    if (parms != null)
+                    {
+                        log.Error("SQL错误:" + parms.toJson());
+                    }
+                    throw ex;
+                }
             }
-            return pageResult;
+            return new PageResult<T>(startIndex, pageSize, count, list);
         }
 
         public List<T> nativeQuerySql(string sql, IDictionary<string, object> parms)
         {
             iDB2Parameter[] db2Parms = null;
-            List<T> list = null;
+            List<T> list = new List<T>();
             if (parms != null)
             {
                 List<iDB2Parameter> parmsList = new List<iDB2Parameter>();
@@ -113,11 +149,11 @@ namespace MVC.Daos.Db2Impl
                 }
                 db2Parms = parmsList.ToArray();
             }
+            try { 
             using (iDB2DataReader rdr = DB2Helper.ExecuteReader(DB2Helper.ConnectionString, CommandType.Text, sql, db2Parms))
             {
                 if (rdr.Read())
                 {
-                    list = new List<T>();
                     do
                     {
                         T t = Activator.CreateInstance<T>();
@@ -125,11 +161,29 @@ namespace MVC.Daos.Db2Impl
                         int i = 0;
                         foreach (PropertyInfo pi in propertyInfo)
                         {
-                            pi.SetValue(t, rdr.GetValue(i++));
+                            try
+                            {
+                                pi.SetValue(t, rdr.GetValue(i++));
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error("字段类型错误，" + pi.Name + ":" + ex.Message);
+                            }
                         }
                         list.Add(t);
                     } while (rdr.Read());
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                log.Error("SQL错误:" + ex.Message);
+                log.Error("SQL错误:" + sql);
+                if (parms != null)
+                {
+                    log.Error("SQL错误:" + parms.toJson());
+                }
+                throw ex;
             }
             return list;
         }

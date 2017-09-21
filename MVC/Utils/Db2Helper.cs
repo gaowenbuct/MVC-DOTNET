@@ -121,12 +121,12 @@ namespace MVC.Utils
                 return rdr;
 
             }
-            catch
+            catch(Exception ex)
             {
 
                 //If an error occurs close the connection as the reader will not be used and we expect it to close the connection
                 conn.Close();
-                throw;
+                throw ex;
             }
         }
 

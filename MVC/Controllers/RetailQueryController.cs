@@ -54,7 +54,7 @@ namespace MVC.Controllers
             ViewData["dealerCode"] = dealerUser.DealerCode.Trim();
             ViewData["regionCode"] = dealerUser.RegionCode.Trim();
             ViewData["startIndex"] = 0;
-            ViewData["pageSize"] = 3;
+            ViewData["pageSize"] = 5;
             log.Info("进入查询界面" + Request.Form.ToString());
             return View("RetailOrderQuery");
         }
@@ -88,7 +88,7 @@ namespace MVC.Controllers
             else {
                 //Thread.Sleep(1000);
                 QueryCriteria queryCriteria = new QueryCriteria(Request.QueryString);
-                PageResult<RetailOrderQueryVo> pageResult = retailQueryService.doFindRetailOrderByCondition(queryCriteria);
+                PageResult<RetailOrderQueryVo> pageResult = retailQueryService.QueryRetailOrderList(queryCriteria);
                 ViewData["pageResult"] = pageResult;
                 Session.Add("pageResult", pageResult);  
             }
@@ -106,8 +106,8 @@ namespace MVC.Controllers
 
         public ActionResult RetailOrderQueryExport()
         {
-            List<RetailOrderQueryVo> list = retailQueryService.doFindRetailOrderByCondition(Request.QueryString);
-            byte[] result = retailQueryService.doExportRetailOrder(list);
+            //List<RetailOrderQueryVo> list = retailQueryService.doFindRetailOrderByCondition(Request.QueryString);
+            byte[] result = retailQueryService.ExportRetailOrderList(Request.QueryString);
             log.Info("导出数据" + Request.QueryString.ToString());
             return File(result, "text/csv", "RetailOrderQueryExport.csv");
         }

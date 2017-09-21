@@ -69,6 +69,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reflection.Context" />
     <Reference Include="System.Text.RegularExpressions" />
     <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
@@ -195,6 +196,7 @@
     <Compile Include="Models\Common\Color.cs" />
     <Compile Include="Models\Common\Interior.cs" />
     <Compile Include="Models\Common\Model.cs" />
+    <Compile Include="Models\Common\ModelGroup.cs" />
     <Compile Include="Models\Common\Series.cs" />
     <Compile Include="Models\Retail\RetailOrder.cs" />
     <Compile Include="Models\System\DealerUser.cs" />
@@ -215,11 +217,13 @@
     <Compile Include="Services\System\UserApiService.cs" />
     <Compile Include="Services\System\UserService.cs" />
     <Compile Include="Services\System\DealerUserService.cs" />
+    <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\Db2Helper.cs" />
     <Compile Include="Utils\FileHelper.cs" />
     <Compile Include="Utils\OracleHelper.cs" />
     <Compile Include="Utils\PageResult.cs" />
     <Compile Include="Utils\QueryCriteria.cs" />
+    <Compile Include="Utils\StringUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-paginator.js" />

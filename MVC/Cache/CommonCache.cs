@@ -14,12 +14,13 @@ namespace MVC.Cache
         private static IDictionary<string,string> seriesDic;
         private static IDictionary<string, string> colorDic;
         private static IDictionary<string, string> interiorDic;
+        private static IDictionary<string, ModelGroup> modelGroupDic;
         public static IDictionary<string, string> GetSeriesDic()
         {
             if (seriesDic == null)
             {
                 List<Series> list = productService.doFindSeriesAll();
-                seriesDic=list.ToDictionary(series => series.SeriesCode, series => series.SeriesName);
+                seriesDic=list.ToDictionary(x => x.SeriesCode, x => x.SeriesName);
             }
             return seriesDic;
         }
@@ -28,7 +29,7 @@ namespace MVC.Cache
             if (colorDic == null)
             {
                 List<Color> list = productService.doFindColorAll();
-                colorDic = list.ToDictionary(color => color.ColorCode, color => color.ColorName);
+                colorDic = list.ToDictionary(x => x.ColorCode, x => x.ColorName);
             }
             return colorDic;
         }
@@ -37,9 +38,73 @@ namespace MVC.Cache
             if (interiorDic == null)
             {
                 List<Interior> list = productService.doFindInteriorAll();
-                interiorDic = list.ToDictionary(interior => interior.InteriorCode, interior => interior.InteriorName);
+                interiorDic = list.ToDictionary(x => x.InteriorCode, x => x.InteriorName);
             }
             return interiorDic;
+        }
+        public static IDictionary<string, ModelGroup> GetModelGroupDic()
+        {
+            if (modelGroupDic == null)
+            {
+                List<ModelGroup> list = productService.doFindModelGroupAll();
+                modelGroupDic = list.ToDictionary(x => x.ModelCode+x.InteriorCode+x.ModelPrNo, x=>x );
+            }
+            return modelGroupDic;
+        }
+        public static string GetSaleSource(string code)
+        {
+            switch (code)
+            {
+                case "A":
+                    return "录入零售";
+                case "B":
+                    return "提单零售";
+                case "C":
+                    return "意向订单零售";
+                default:
+                    return string.Empty;
+            }
+        }
+        public static string GetOrderStatus(string code)
+        {
+            if (code.Equals("Y"))
+            {
+                return "有效";
+            }
+            else
+            {
+                return "作废";
+            }
+        }
+        public static string GetAccessory(string code)
+        {
+            if (code.Equals("Y"))
+            {
+                return "是";
+            }
+            else if (code.Equals("N"))
+            {
+                return "否";
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+        public static string GetClub(string code)
+        {
+            if (code.Equals("Y"))
+            {
+                return "是";
+            }
+            else if(code.Equals("N"))
+            {
+                return "否";
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
     }
 }

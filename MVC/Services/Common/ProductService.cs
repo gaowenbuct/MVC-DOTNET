@@ -11,6 +11,7 @@ namespace MVC.Services.Common
         List<Series> doFindSeriesAll();
         List<Color> doFindColorAll();
         List<Interior> doFindInteriorAll();
+        List<ModelGroup> doFindModelGroupAll();
         List<Model> doFindModel(string seriesCode,string modelCode);
         List<Color> doFindModelColor(string modelCode,string color);
         List<Interior> doFindModelInterior(string modelCode,string interior);

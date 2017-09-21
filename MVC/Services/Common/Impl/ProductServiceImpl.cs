@@ -26,6 +26,16 @@ namespace MVC.Services.Common.Impl
             BaseDao<Interior> baseDao = DaoFactory<Interior>.CreateBaseDao(typeof(Interior));
             return baseDao.FindAll("SELECT BSNSYM AS InteriorCode, BSNSJC AS InteriorName, '' AS ModelCode FROM SJVDTALIB.KCM10 INTERIOR WHERE ZMDWDM = '08'");
         }
+        public List<ModelGroup> doFindModelGroupAll()
+        {
+            //log.Info("doFindModelPrAll begin");
+            getLogger(this).Info("doFindModelGroupAll begin");
+            BaseDao<ModelGroup> baseDao = DaoFactory<ModelGroup>.CreateBaseDao(typeof(ModelGroup));
+            List<ModelGroup> list=baseDao.FindAll("SELECT XSCLDM AS ModelGroupCode,BSCLDM AS ModelCode,CHAR(KCMDY1) AS ModelYear,KCVER1 AS ModelVersion,BSNSYM AS InteriorCode," +
+                "CYCLP1 AS PrList, BSPNXH AS ModelPrNo FROM SJVDTALIB.KCM32 MODEL_GROUP WHERE ZMDWDM = '08' AND KCMDY1>2012");
+            getLogger(this).Info("doFindModelGroupAll end");
+            return list;
+        }
         public List<Model> doFindModel(string seriesCode, string modelCode)
         {
             BaseDao<Model> baseDao = DaoFactory<Model>.CreateBaseDao(typeof(Model));

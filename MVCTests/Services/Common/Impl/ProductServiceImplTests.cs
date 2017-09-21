@@ -15,10 +15,10 @@ namespace MVC.Services.Common.Impl.Tests
     [TestClass()]
     public class ProductServiceImplTests
     {
+        private ProductService service = new ProductServiceImpl();
         [TestMethod()]
         public void doFindAllSeriesTest()
         {
-            ProductService service = new ProductServiceImpl();
             service.doFindSeriesAll();
         }
         [TestMethod()]
@@ -45,7 +45,6 @@ namespace MVC.Services.Common.Impl.Tests
         [TestMethod()]
         public void doGetModelInfoTest()
         {
-            ProductService service = new ProductServiceImpl();
             Model model = service.doGetModelInfo("A422H2");
             Assert.IsNotNull(model);
         }
@@ -53,9 +52,14 @@ namespace MVC.Services.Common.Impl.Tests
         [TestMethod()]
         public void doFindModelTest()
         {
-            ProductService service = new ProductServiceImpl();
-            List<Model> list = service.doFindModel("16","02");
+            List<Model> list = service.doFindModel("16", "02");
             Assert.IsNotNull(list);
+        }
+
+        [TestMethod()]
+        public void doFindModelPrAllTest()
+        {
+            List<ModelGroup> list = service.doFindModelPrAll();
         }
     }
 }
