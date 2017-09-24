@@ -1,314 +1,172 @@
-﻿@using MVC.Models.Retail;
+﻿@using MVC.Services.Retail.Vo;
 @{
     Layout = null;
 }
 <div class="right">
     <div class="table">
         <table width="100%" align="left" border="0" cellspacing="1" cellpadding="2" >
-            @if (ViewData["retailOrder"] != null)
+            @if (ViewData["result"] != null)
             {
-                RetailOrder item = ViewData["retailOrder"] as RetailOrder;
+                RetailOrderQueryDetailsVo item = ViewData["result"] as RetailOrderQueryDetailsVo;
                 <tr>
                     <td class="fontStyle" align="left">零售订单:</td>
                     <td align="left">@item.OrderNo</td>
                     <td align="left" class="fontStyle">登记日期:</td>
-                    <td align="left">@item.RetailTime</td>
+                    <td align="left">@item.CreateDate</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">车辆代码:</td>
-                    <td align="left">182CP1-新朗逸1.6L Tip-6 TL</td>
+                    <td align="left">@item.Model</td>
                     <td align="left" class="fontStyle">颜色代码:</td>
-                    <td align="left">MT(2T2T)-神秘黑</td>
+                    <td align="left">@item.Color</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">车型年:</td>
-                    <td align="left">2015</td>
+                    <td align="left">@item.ModelYear</td>
                     <td align="left" class="fontStyle">版本号:</td>
-                    <td align="left">1</td>
+                    <td align="left">@item.ModelVersion</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">内饰:</td>
-                    <td align="left">BY-黑色</td>
+                    <td align="left">@item.Interior</td>
                     <td align="left" class="fontStyle">选装包:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.PrList</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">零售时间:</td>
-                    <td align="left">-</td>
+                    <td align="left">@item.RetailDateTime</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">VIN码:</td>
                     <td align="left">@item.Vin</td>
                     <td align="left" class="fontStyle">发动机号:</td>
-                    <td align="left">561431</td>
+                    <td align="left">@item.EngineNo</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">入库日期:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.VehicleInStockDate</td>
                     <td align="left" class="fontStyle">出库日期:</td>
-                    <td align="left">2017/03/02</td>
+                    <td align="left">@item.VehicleOutStockDate</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">发票类型:</td>
-                    <td align="left">
-                        <select size="1" name="LDMFPLX   "
-                                disabled="disabled">
-                            <option value="A">一般发票</option>
-                            <option value="B">增值税</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.InvoiceType</td>
                     <td align="left" class="fontStyle">发票号码:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.InvoiceNo</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">用户名称:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.CustomerName</td>
                     <td align="left" class="fontStyle">联系地址:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.Address</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">性别:</td>
-                    <td align="left">
-                        <select size="1" name="LVSRYXB   " id="VSRYXB"
-                                disabled="disabled">
-                            <option value="A">男</option>
-                            <option value="B">女</option>
-                            <option value="" selected="selected">&nbsp;</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.Gender</td>
                     <td align="left" class="fontStyle">县代码:</td>
                     <td align="left"></td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">客户类别:</td>
-                    <td>
-                        <select size="1" name="LDMKHLB   " id="DMKHLB"
-                                disabled="disabled">
-                            <option value="A">个人</option>
-                            <option value="B">公司</option>
-                            <option value="C">经销商</option>
-                        </select>
-
-                    </td>
+                    <td align="left">@item.CustomerType</td>
                     <td align="left" class="fontStyle">车辆用途:</td>
-                    <td>
-                        <select size="1" name="LDMCLYT   " id="DMCLYT"
-                                disabled="disabled">
-                            <option value="01">没有回答</option>
-                            <option value="02">交通车</option>
-                            <option value="03">客运车</option>
-                            <option value="04">私人车</option>
-                            <option value="05">货运车</option>
-                            <option value="06">公司车</option>
-                            <option value="07">客货两用车</option>
-                            <option value="08">家庭商务用车</option>
-                        </select>
-
-                    </td>
+                    <td align="left">@item.VehiclePurpose</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">证件类型:</td>
-                    <td align="left">
-                        <select size="1" name="LVTZJLX   " id="VTZJLX"
-                                disabled="disabled">
-                            <option value="A">身份证</option>
-                            <option value="B">军官证</option>
-                            <option value="C">护照</option>
-                            <option value="D">其他</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.CertificateType</td>
                     <td align="left" class="fontStyle">证件号码:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.CertificateNo</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">电话号码:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.Telephone</td>
                     <td align="left" class="fontStyle">手机号码:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.Mobile</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">电子邮件:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.Email</td>
                     <td align="left" class="fontStyle">联系人:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.Contact</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">邮政编码:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.ZipCode</td>
                     <td align="left" class="fontStyle">职务:</td>
-                    <td align="left">
-                        <select size="1" name="LDMZWZW   " id="DMZWZW"
-                                disabled="disabled">
-                            <option value="01">没有回答</option>
-                            <option value="02">高层管理人员</option>
-                            <option value="03">中层管理人员</option>
-                            <option value="04">基层管理人员</option>
-                            <option value="05">一般职员</option>
-                            <option value="06">私营公司老板/自由职业者/个体户</option>
-                            <option value="07">专业人士 (律师/医生等)</option>
-                            <option value="08">公务员／管理员／教师／护士／警察／军人</option>
-                            <option value="09">其它</option>
-                            <option value="10">自由职业者</option>
-                            <option value="11">政府/国家事业单位人员</option>
-                            <option value="12">国企或私/民营企业经营管理人员</option>
-                            <option value="13">外资或合资企业专业技术人员</option>
-                            <option value="14">学生、退休、家庭主妇/主男</option>
-                            <option value="15">国企或私/民营企业专业技术人员</option>
-                            <option value="16">自己或与人合伙开办企业或公司</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.Duty</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">公司性质:</td>
-                    <td align="left">
-                        <select size="1" name="LDMGSXZ   " id="DMGSXZ"
-                                disabled="disabled">
-                            <option value="00">没有回答</option>
-                            <option value="01">国有</option>
-                            <option value="02">集体</option>
-                            <option value="03">乡镇</option>
-                            <option value="04">三资</option>
-                            <option value="05">私营</option>
-                            <option value="06">自雇</option>
-                            <option value="07">股份制</option>
-                            <option value="08">中小型公司</option>
-                            <option value="09">有限责任公司</option>
-                            <option value="10">非赢利公司</option>
-                            <option value="11">跨国公司</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.CompanyProperty</td>
                     <td align="left" class="fontStyle">从事行业:</td>
-                    <td align="left">
-                        <select size="1" name="LDMCSHY   " id="DMCSHY"
-                                disabled="disabled">
-                            <option value="01">没有回答</option>
-                            <option value="02">经营管理类</option>
-                            <option value="03">计算机/IT人员</option>
-                            <option value="04">高层管理人员</option>
-                            <option value="05">电子/通讯类专业人员</option>
-                            <option value="06">中层管理人员</option>
-                            <option value="07">销售/业务类</option>
-                            <option value="08">基层管理人员</option>
-                            <option value="09">市场营销/公关</option>
-                            <option value="10">一般职员</option>
-                            <option value="11">客户服务类</option>
-                            <option value="12">私营公司老板/自由职业者/个体户</option>
-                            <option value="13">行政/人力资源类</option>
-                            <option value="14">专业人员（律师/医生等）</option>
-                            <option value="15">文职类</option>
-                            <option value="16">公务员／管理员／教师／护士／警察／军人等</option>
-                            <option value="17">翻译类</option>
-                            <option value="18">其他</option>
-                            <option value="19">自由职业者</option>
-                            <option value="20">政府/国家事业单位人员</option>
-                            <option value="21">国企或私/民营企业经营管理人员</option>
-                            <option value="22">外企或合资企业专业技术人员</option>
-                            <option value="23">自己或与人合伙开办企业或公司</option>
-                            <option value="24">学生、退休、家庭主妇/主男</option>
-                            <option value="25">国企或私/民营企业经营专业技术人员</option>
-                            <option value="26">演员、艺术家、文化界或体育界人士</option>
-                            <option value="27">咨询/顾问</option>
-                            <option value="28">医疗/护理/保健类</option>
-                            <option value="29">技工类</option>
-                            <option value="30">文教类</option>
-                            <option value="31">服务业专业人员</option>
-                            <option value="32">其他专业人员</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.CompanyIndustry</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">销售类型:</td>
-                    <td align="left">
-                        <select size="1" name="LDMXSLX   " id="DMXSLX" onChange="changeoption(document.LANSA.DMXSLX.options[document.LANSA.DMXSLX.selectedIndex].value)"
-                                disabled="disabled">
-                            <option value="A" selected="selected">正常</option>
-                            <option value="B">转卖</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.SalesType</td>
                     <td align="left" class="fontStyle">转卖客户:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.ResellDealer</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">零售单价:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.Price</td>
                     <td align="left" class="fontStyle">零售数量:</td>
-                    <td align="left">1</td>
+                    <td align="left">@item.Quantity</td>
                 </tr>
                 <tr>
                     <td class="fontStyle">销售员:</td>
-                    <td nowrap>&nbsp;-&nbsp;    </td>
+                    <td align="left">@item.SalesPerson</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">销售出库日期:</td>
-                    <td align="left">2017/03/02</td>
+                    <td align="left">@item.OutStockDate</td>
                     <td align="left" class="fontStyle">发票日期:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.InvoiceDate</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">备注:</td>
-                    <td align="left" colspan=3></td>
+                    <td align="left" colspan=3>@item.Remark</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">是否使用积分:</td>
-                    <td align="left">
-                        <select size="1" name="LDMJFSZ   " id="DMJFSZ" onChange="changeoption(document.LANSA.DMJFSZ.options[document.LANSA.DMJFSZ.selectedIndex].value)"
-                                disabled="disabled">
-                            <option value="N">未使用</option>
-                            <option value="Y">使用</option>
-                        </select>
-                    </td>
+                    <td align="left">@item.UsePoint</td>
                     <td align="left" class="fontStyle">积分金额:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.PointAmount</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">POS流水号:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.PosFlowNo</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">奖品:</td>
-                    <td align="left">-</td>
-                    <td class="fontStyle">是否装配原装附件包:</td>
-                    <td align="left">
-                        <input type=Hidden name="AWKFJBZ" VALUE=N>
-                        <select size="1" name="LVSSFFJ   "
-                                disabled="disabled">
-                            <option value="Y">是</option>
-                            <option value="N" selected="selected">否</option>
-                        </select>
+                    <td align="left">@item.Prize</td>
+                    <td align="left" class="fontStyle">是否装配原装附件包:</td>
+                    <td align="left">@item.Accessory</td>
                 </tr>
                 <tr>
-                    <td class="fontStyle">是否加入会员俱乐部:</td>
-                    <td>
-                        <select size="1" name="VSJLBZ" id="VSJLBZ"
-                                disabled="disabled">
-                            <option value="N">否</option>
-                            <option value="Y">是</option>
-                        </select>
-                    </td>
-                    <td class="fontStyle">三包车辆:</td>
-                    <td>
-                        <select size="1" name="VSSBCL" id="VSSBCL" disabled="disabled"></select>
-                    </td>
+                    <td align="left" class="fontStyle">是否加入会员俱乐部:</td>
+                    <td align="left">@item.Club</td>
+                    <td align="left" class="fontStyle">三包车辆:</td>
+                    <td align="left">@item.ThreeGuarantees</td>
                 </tr>
-                <tr>
+                <!--<tr>
                     <td class="fontStyle">省代码: </td>
                     <td align="left"><font face="宋体" size="2">-</font></td>
                     <td class="fontStyle">区代码: </td>
                     <td align="left"><font face="宋体" size="2">-</font></td>
-                </tr>
+                </tr>-->
                 <tr>
                     <td align="left" class="fontStyle">车牌备注:</td>
-                    <td align="left"></td>
-                    <td class="fontStyle">网外二网名称: </td>
-                    <td align="left"></td>
+                    <td align="left">@item.LicenseRemark</td>
+                    <td align="left" class="fontStyle">网外二网名称: </td>
+                    <td align="left">@item.OutSource</td>
                 </tr>
                 <tr>
                     <td align="left" class="fontStyle">车牌号码:</td>
-                    <td align="left"></td>
+                    <td align="left">@item.LicenseNo</td>
                 </tr>
             }
         </table>
     </div>
 </div>
-
-

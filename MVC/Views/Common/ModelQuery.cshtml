@@ -12,8 +12,12 @@
 <script src="../Content/jquery/jquery-1.10.2.min.js"></script>
 <script>
     function f_search() {
-        if ($("#seriesCode").val() == "" && ($("#modelCode").val().length<2)) {
+        /*if ($("#seriesCode").val() == "" && ($("#modelCode").val().length<2)) {
             alert("请选择车型大类或输入两位以上车型代码");
+            return;
+        };*/
+        if ($("#seriesCode").val() !== "" && $("#modelCode").val() !== "") {
+            alert("不能同时根据车型大类和车型代码进行查询");
             return;
         };
         $.ajax({
@@ -25,15 +29,17 @@
             success: function (data) {
                 $("#modelList tr:gt(0)").remove(); 
                 //var jsondata = JSON.parse(data);
-                if (data == "") {
-                    return;
-                };
                 var jsondata = $.parseJSON(data);
-                $.each(jsondata, function (i, item) {
+                /*$.each(jsondata, function (i, item) {
                     $("#modelList").append(
                         "<tr><td><input type='radio' name='id' value='" + item.ModelCode+"' class='check'></input></td><td>" +
                         item.ModelCode + "</td><td>" + item.ModelName + "</td></tr>");
-                });
+                });*/
+                for (var key in jsondata) {
+                    $("#list").append(
+                        "<tr><td><input type='radio' name='id' value='" + key + "' class='check'></input></td><td>" +
+                        key + "</td><td>" + jsondata[key] + "</td></tr>");
+                }
             }
         });
     }
@@ -78,7 +84,7 @@
 
             <h2>查询列表</h2>
             <div id="content" class="table">
-                <table id="modelList" class="list" border="0" cellspacing="1" cellpadding="1">
+                <table id="list" class="list" border="0" cellspacing="1" cellpadding="1">
                     <tr>
                         <td width="50" align="left" class="tit">选择</td>
                         <td align="center" class="tit">车型代码</td>

@@ -22,9 +22,8 @@ namespace MVC.Controllers
     {
         protected static log4net.ILog log = log4net.LogManager.GetLogger(typeof(RetailQueryController));
         private static readonly RetailQueryService retailQueryService = new RetailQueryServiceImpl();
-        private static readonly RetailOrderService retailOrderService = new RetailOrderServiceImpl();
         private static readonly DealerUserService dealerUserService = new DealerUserServiceImpl();
-        // GET: RetaiQuery
+
         public ActionResult RetailOrderQuery(string AHDCZXM,string AEBPSWD,string ALWEBQRYID)
         {
             if (string.IsNullOrWhiteSpace(ALWEBQRYID))
@@ -54,7 +53,7 @@ namespace MVC.Controllers
             ViewData["dealerCode"] = dealerUser.DealerCode.Trim();
             ViewData["regionCode"] = dealerUser.RegionCode.Trim();
             ViewData["startIndex"] = 0;
-            ViewData["pageSize"] = 5;
+            ViewData["pageSize"] = CfgReader.RetailOrderQueryPigeSize;
             log.Info("进入查询界面" + Request.Form.ToString());
             return View("RetailOrderQuery");
         }
@@ -88,7 +87,7 @@ namespace MVC.Controllers
             else {
                 //Thread.Sleep(1000);
                 QueryCriteria queryCriteria = new QueryCriteria(Request.QueryString);
-                PageResult<RetailOrderQueryVo> pageResult = retailQueryService.QueryRetailOrderList(queryCriteria);
+                PageResult<RetailOrderQueryListVo> pageResult = retailQueryService.QueryRetailOrderList(queryCriteria);
                 ViewData["pageResult"] = pageResult;
                 Session.Add("pageResult", pageResult);  
             }
@@ -96,10 +95,10 @@ namespace MVC.Controllers
             return View("RetailOrderQueryList");
         }
 
-        public ActionResult RetailOrderQueryDetails(string orderNo)
+        public ActionResult RetailOrderQueryDetails(string orderNo,string remarkFlag)
         {
-            RetailOrder retailOrder = retailOrderService.Details(orderNo);
-            ViewData["retailOrder"] = retailOrder;
+            RetailOrderQueryDetailsVo result = retailQueryService.QueryRetailOrderDetails(orderNo,remarkFlag);
+            ViewData["result"] = result;
             log.Info("查询明细数据" + Request.Form.ToString());
             return View("RetailOrderQueryDetails");
         }

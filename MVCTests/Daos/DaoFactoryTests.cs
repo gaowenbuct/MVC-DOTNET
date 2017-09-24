@@ -17,7 +17,7 @@ namespace MVC.Daos.Tests
         [TestMethod()]
         public void CreateBaseDaoTest()
         {
-            BaseDao<RetailOrderQueryVo> baseDao = DaoFactory<RetailOrderQueryVo>.CreateBaseDao(typeof(RetailOrderQueryVo));
+            BaseDao<RetailOrderQueryListVo> baseDao = DaoFactory<RetailOrderQueryListVo>.CreateBaseDao(typeof(RetailOrderQueryListVo));
             Assert.IsNotNull(baseDao);
         }
 

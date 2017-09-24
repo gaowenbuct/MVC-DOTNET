@@ -376,13 +376,13 @@ namespace MVC.Utils
                 return 0;
             }
         }
-        public static string GetPageSql(string selectFields,string orderField, string tableName,string condition,int startIndex,int pageSize)
+        public static string GetPageSql(string selectFields,string orderFields, string tableName,string condition,int startIndex,int pageSize)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT * FROM(SELECT ");
             sb.Append(selectFields);
             sb.Append(",ROW_NUMBER() OVER(ORDER BY ");
-            sb.Append(orderField);
+            sb.Append(orderFields);
             sb.Append(" ASC) AS ROWNUM FROM ");
             sb.Append(tableName);
             sb.Append(" WHERE 1=1 ");
@@ -402,6 +402,30 @@ namespace MVC.Utils
             sb.Append(tableName);
             sb.Append(" WHERE 1=1 ");
             sb.Append(condition);
+            return sb.ToString();
+        }
+        public static string GetSql(string selectFields,string tableName, string condition)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            sb.Append(selectFields);
+            sb.Append(" FROM ");
+            sb.Append(tableName);
+            sb.Append(" WHERE 1=1 ");
+            sb.Append(condition);
+            return sb.ToString();
+        }
+        public static string GetSql(string selectFields, string tableName, string condition,string orderFields)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            sb.Append(selectFields);
+            sb.Append(" FROM ");
+            sb.Append(tableName);
+            sb.Append(" WHERE 1=1 ");
+            sb.Append(condition);
+            sb.Append(" ORDER BY ");
+            sb.Append(orderFields);
             return sb.ToString();
         }
     }

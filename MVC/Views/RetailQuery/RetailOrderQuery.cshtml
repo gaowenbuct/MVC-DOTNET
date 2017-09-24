@@ -119,12 +119,12 @@
                 changeYear: true,
                 changeMonth: true
             });
-            /*$('.ui-datepicker-controls').css('display', '');
-            $("#btnReturn").attr("disabled", "disabled");*/
+            /*$('.ui-datepicker-controls').css('display', '');*/
             //$("#colorDialog").css("display", "none");
             //$("#interiorDialog").css("display", "none");
-
-            //initDate();
+            $("#btnReturn").attr("disabled", "disabled");
+            initDate();
+            //$('#startDateOutStock').trigger("focus");
         });
         function customRange(input) {
             return {
@@ -186,7 +186,7 @@
                 return false;
             };
         };
-        function DateValidateDiff(date1, date2) {
+        function DateValidateRange(date1, date2, daysRange) {
             if (date1 == "" || date2 == "") {
                 return false;
             }
@@ -196,39 +196,49 @@
             aDate = date2.split("-")
             oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0])
             iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24) 
-            if (iDays >= 0 && iDays <= 9931) {
+            if (iDays >= 0 && iDays <= daysRange) {
                 return true;
             } else {
                 return false;
             }
-        } 
-        function search() {
+        };
+        function checkSearchCondition(daysRange) {
             if ($("#modelCode").val().length > 0 && $("#modelCode").val().length < 6) {
                 alert("车型代码输入不完整");
-                return;
+                return false;
             }
-            if ($("#modelCode").val().length == 6&&$("#modelCodeSelected").val() == "") {
+            if ($("#modelCode").val().length == 6 && $("#modelCodeSelected").val() == "") {
                 alert("车型代码不正确");
-                return;
+                return false;
             };
             if (!(dateValidate($("#startDateOutStock").val()) && dateValidate($("#endDateOutStock").val()) &&
                 dateValidate($("#startDateCreate").val()) && dateValidate($("#endDateCreate").val()) &&
                 dateValidate($("#startDateInvoice").val()) && dateValidate($("#endDateInvoice").val()))) {
-                alert("日期格式不正确"); 
-                return;
+                alert("日期格式不正确");
+                return false;
             };
-            /*if (((dateValidateNull($("#startDateOutStock").val()) && dateValidateNull($("#endDateOutStock").val())) ||
-                (dateValidateNull($("#startDateCreate").val()) && dateValidateNull($("#endDateCreate").val())) ||
-                (dateValidateNull($("#startDateInvoice").val()) && dateValidateNull($("#endDateInvoice").val())))) {
-                alert("请至少输入一对日期条件");
-                return;
+            if ($("#vin").val().length == 0) {
+                if (((dateValidateNull($("#startDateOutStock").val()) && dateValidateNull($("#endDateOutStock").val())) ||
+                    (dateValidateNull($("#startDateCreate").val()) && dateValidateNull($("#endDateCreate").val())) ||
+                    (dateValidateNull($("#startDateInvoice").val()) && dateValidateNull($("#endDateInvoice").val())))) {
+                    alert("请至少输入一对日期条件");
+                    return false;
+                };
+                if (!(DateValidateRange($("#startDateOutStock").val(), $("#endDateOutStock").val(), daysRange) ||
+                    DateValidateRange($("#startDateCreate").val(), $("#endDateCreate").val(), daysRange) ||
+                    DateValidateRange($("#startDateInvoice").val(), $("#endDateInvoice").val(), daysRange))) {
+                    alert("日期区间必须小于" + daysRange+"天");
+                    return false;
+                };
+            } else if ($("#vin").val().length < 17) {
+                alert("vin输入不完整");
+                return false;
             };
-            if (!(DateValidateDiff($("#startDateOutStock").val(), $("#endDateOutStock").val()) ||
-                DateValidateDiff($("#startDateCreate").val(), $("#endDateCreate").val()) ||
-                DateValidateDiff($("#startDateInvoice").val(), $("#endDateInvoice").val()))) {
-                alert("日期区间必须小于31天");
+            return true;
+        };
+        function search() {
+            if (!checkSearchCondition(31))
                 return;
-            };*/
             openDialog();
             $("#content").load(
                 "RetailOrderQueryList?" + $("#form").serialize(), function (data) {
@@ -251,7 +261,7 @@
             $.ajax({
                 type: "post",
                 url: "/RetailQuery/RetailOrderQueryDetails",
-                data: { "orderNo": orderNo },
+                data: { "orderNo": orderNo, "remarkFlag": $("#remarkFlag").val()},
                 dataType: "Text",
                 async: false,
                 success: function (data) {
@@ -266,29 +276,45 @@
         }
         function f_return() {
             $("#content").load(
-                "RetailOrderQueryList?returnFlag=true", function (data) {
+                "RetailOrderQueryList?returnFlag=true&username=" + $("#username").val() + "&dealerCode=" + $("#dealerCode").val(), function (data) {
                 });
             $("#btnReturn").attr("disabled", "disabled");
         };
         function f_export() {
             var fal = confirm('是否确定导出?');
             if (fal) {
+                if (!checkExportCondition(91)) 
+                    return;   
                 var frm = document.forms['form'];
                 window.location.href = "RetailOrderQueryExport?"
                     + $("#form").serialize();
-            }
-        }
+            };
+        };
+        function checkExportCondition(daysRange) {
+            if (((dateValidateNull($("#startDateOutStock").val()) && dateValidateNull($("#endDateOutStock").val())) ||
+                (dateValidateNull($("#startDateCreate").val()) && dateValidateNull($("#endDateCreate").val())) ||
+                (dateValidateNull($("#startDateInvoice").val()) && dateValidateNull($("#endDateInvoice").val())))) {
+                alert("请至少输入一对日期条件");
+                return false;
+            };
+            if (!(DateValidateRange($("#startDateOutStock").val(), $("#endDateOutStock").val(), daysRange) ||
+                DateValidateRange($("#startDateCreate").val(), $("#endDateCreate").val(), daysRange) ||
+                DateValidateRange($("#startDateInvoice").val(), $("#endDateInvoice").val(), daysRange))) {
+                alert("日期区间必须小于" + daysRange + "天");
+                return false;
+            };
+            return true;
+        };
     </script>
 </head>
 <body>
     <div id="dialog" title="提示">
         查询中，请等待...
     </div>
-    
-    <div class="right">
-        <div class="table">
-            <form id="form" name="form" theme="simple" method="post">
-                <span id="title" class="title">零售信息查询</span>
+    <form id="form" name="form" theme="simple" method="post">
+        <div class="right">
+            <div class="table"><!---->
+                <span id="title" class="title">零售信息查询和下载</span>
                 <input type="hidden" id="userType" name="userType" value="" />
                 <input type="hidden" id="username" name="username" value="@ViewData["username"]" />
                 <input type="hidden" id="dealerCode" name="dealerCode" value="@ViewData["dealerCode"]" />
@@ -351,7 +377,7 @@
                     <tr>
                         <td class="arrow">销售来源:</td>
                         <td>
-                            <select size="1" name="saleSource">
+                            <select size="1" name="salesSource">
                                 <option value="" selected="selected">&nbsp;</option>
                                 <option value="A">录入零售</option>
                                 <option value="B">提单零售</option>
@@ -396,7 +422,7 @@
                         </td>
                         <td class="arrow">是否查询备注后信息:</td>
                         <td>
-                            <select size="1" name="remark">
+                            <select size="1" name="remarkFlag">
                                 <option value="N">否</option>
                                 <option value="Y">是</option>
                             </select>
@@ -405,13 +431,13 @@
                 </table>
                 <div class="line"></div>
                 <input type="button" id="btnSearch" name="btnSearch" class="button2" value="查询" onclick="f_search()" />
-                <input type="button" id="btnExport" name="btnExport" class="button2" value="导出" onclick="f_export()" />
+                <input type="button" id="btnExport" name="btnExport" class="button2" value="下载" onclick="f_export()" />
                 <input type="button" id="btnReset" name="btnReset" class="button2" value="重置" onclick="f_reset()" />
                 <input type="button" id="btnReturn" name="btnReturn" class="button2" value="返回" onclick="f_return()" />
-            </form>
-        </div>
-        <div id="content">
-        </div>
+             </div>
+       </div><!---->
+    </form>
+    <div id="content">
     </div>
 </body>
 </html>

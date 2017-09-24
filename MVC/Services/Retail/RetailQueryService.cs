@@ -10,7 +10,8 @@ namespace MVC.Services.Retail
 {
     public interface RetailQueryService : BaseService
     {
-        PageResult<RetailOrderQueryVo> QueryRetailOrderList(QueryCriteria queryCriteria);
+        PageResult<RetailOrderQueryListVo> QueryRetailOrderList(QueryCriteria queryCriteria);
+        RetailOrderQueryDetailsVo QueryRetailOrderDetails(string orderNo, string remarkFlag);
         byte[] ExportRetailOrderList(NameValueCollection queryString);
     }
 }

@@ -72,7 +72,6 @@
     <Compile Include="Daos\OracleImpl\UserDaoImplTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Common\Impl\ProductServiceImplTests.cs" />
-    <Compile Include="Services\Retail\Impl\RetailOrderServiceImplTests.cs" />
     <Compile Include="Services\Retail\Impl\RetailQueryServiceImplTests.cs" />
     <Compile Include="Services\System\Impl\UserServiceImplTests.cs" />
     <Compile Include="Services\System\Impl\VmsUserServiceImplTests.cs" />

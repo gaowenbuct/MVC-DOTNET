@@ -27,18 +27,19 @@ namespace MVC.Services.Retail.Impl.Tests
             nvc.Add("pageSize", "3");
             nvc.Add("startDateCreate", "2017-09-01");
             nvc.Add("endDateCreate", "2017-09-21");
+            nvc.Add("remark", "Y");
             QueryCriteria queryCriteria = new QueryCriteria(nvc);
-            PageResult<RetailOrderQueryVo> result=retailQueryService.QueryRetailOrderList(queryCriteria);
+            PageResult<RetailOrderQueryListVo> result=retailQueryService.QueryRetailOrderList(queryCriteria);
         }
         [TestMethod()]
         public void initData()
         {
-            List<RetailOrderQueryVo> list = new List<RetailOrderQueryVo>();
-            RetailOrderQueryVo vo = null;
+            List<RetailOrderQueryListVo> list = new List<RetailOrderQueryListVo>();
+            RetailOrderQueryListVo vo = null;
            
             for (int i = 0; i <= 20; i++)
             {
-                vo = new RetailOrderQueryVo();
+                vo = new RetailOrderQueryListVo();
                 vo.Vin = "VIN"+i;
                 vo.OrderNo = "ORDER"+i;
                 list.Add(vo);

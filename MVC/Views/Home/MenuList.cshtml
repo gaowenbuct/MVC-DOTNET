@@ -12,22 +12,54 @@
     <link href="../Content/css/jquery.treeview.css" rel="stylesheet" type="text/css">
     <script src="../Content/jquery/jquery-1.10.2.min.js"></script>
     <script src="../Content/jquery/jquery.treeview.js"></script>
+    <script>
+        function go(url) {
+            $("#myFormId").attr("action", url);
+            $("#AHDCZXM").val($("#username").val());
+            $("#AEBPSWD").val($("#password").val());
+
+            document.form.target = "mainFrame";
+            document.form.action = url;
+            document.form.method = "post";
+            document.form.submit();
+        };
+    </script>
 </head>
-<body bgcolor="white">
+<body bgcolor="white" onload="go('../RetailQuery/RetailOrderQuery')">
+    <form id="form" name="form" action="" Method="post">
+        <input type="HIDDEN" id="AZMDWDM" name="AZMDWDM" value="08" />
+        <input type="HIDDEN" id="AZMPPDM" name="AZMPPDM" value="V" />
+        <input type="HIDDEN" id="AZMKHDM" name="AZMKHDM" value="" />
+        <input type="HIDDEN" id="AVSYHLX" name="AVSYHLX" value="Y" />
+        <input type='HIDDEN' id="AHDCZXM" name="AHDCZXM" value="" />
+        <input type='HIDDEN' id="AEBPSWD" name="AEBPSWD" value="" />
+        <input type='HIDDEN' id="ALWEBQRYID" name="ALWEBQRYID" value="1234567890" />
+        <table>
+            <tr><td></td></tr>
+            <tr><td><input name="username" id="username" type="text" size="10" maxlength="10" value="PGMTF" /></td></tr>
+            <tr><td><input name="password" id="password" type="text" size="10" maxlength="6" value="PPPPPP" /></td></tr>
+        </table>
+    </form>   
     <div id="sidetree">
         <div class="treeheader">&nbsp;</div>
         <div id="sidetreecontrol">&nbsp;&nbsp;&nbsp;&nbsp; <a href="?#">全部收起</a> | <a href="?#">全部展开</a> </div>
         <br />
-        <div id='tcon'>
+        <!--<div id='tcon'>
             <ul class="treeview" id="tree">
                 <li class="expandable"><div class="hitarea expandable-hitarea"></div><strong>test</strong>
                 <ul style="display: none;">
                     <li class="expandable"><div class="hitarea expandable-hitarea"></div><strong><a href="aaa" target="mainFrame">test1</a></strong>
                     <li class="expandable"><div class="hitarea expandable-hitarea"></div><strong><a href="bbb" target="mainFrame">test1</a></strong>
                 </ul>
-                <li class="last"><strong><a href="../RetailQuery/RetailOrderQuery" target="mainFrame">回到首页</a></strong></li>
+                <li class="last"><strong><a href="" onclick="go('../RetailQuery/RetailOrderQuery');return false;">零售信息查询和下载</a></strong></li>
+            </ul>
+        </div>-->
+        <div id='tcon'>
+            <ul class="treeview" id="tree">
+                <li class="last"><strong><a href="" onclick="go('../RetailQuery/RetailOrderQuery');return false;">零售信息查询和下载</a></strong></li>
             </ul>
         </div>
     </div>
+    
 </body>
 </html>

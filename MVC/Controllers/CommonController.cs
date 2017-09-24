@@ -24,7 +24,8 @@ namespace MVC.Controllers
         }
         public JsonResult ModelQuerySearch(string seriesCode,string modelCode)
         {
-            List<Model> modelList = productService.doFindModel(seriesCode,modelCode);
+            //List<Model> modelList = productService.doFindModel(seriesCode,modelCode);
+            IDictionary<string, string> modelList = productService.doFindModelList(seriesCode, modelCode);
             return Json(modelList);
         }
         public JsonResult GetModelInfo(string modelCode)

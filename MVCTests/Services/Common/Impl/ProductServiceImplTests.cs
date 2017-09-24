@@ -52,14 +52,14 @@ namespace MVC.Services.Common.Impl.Tests
         [TestMethod()]
         public void doFindModelTest()
         {
-            List<Model> list = service.doFindModel("16", "02");
+            IDictionary<string,string> list = service.doFindModelList("16", "02");
             Assert.IsNotNull(list);
         }
 
         [TestMethod()]
         public void doFindModelPrAllTest()
         {
-            List<ModelGroup> list = service.doFindModelPrAll();
+            List<ModelGroup> list = service.doFindModelGroupAll();
         }
     }
 }

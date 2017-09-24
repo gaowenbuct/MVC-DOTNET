@@ -16,6 +16,10 @@ namespace MVC.Daos.OracleImpl
         {
             throw new NotImplementedException();
         }
+        public IDictionary<string,string> FindAllDic(string sql)
+        {
+            throw new NotImplementedException();
+        }
         public PageResult<T> nativeQuerySql(string sql, string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
         {
             throw new NotImplementedException();

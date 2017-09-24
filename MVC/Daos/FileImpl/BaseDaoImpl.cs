@@ -30,10 +30,20 @@ namespace MVC.Daos.FileImpl
             {
                 foreach (T item in list)
                 {
-                    string itemParmValue= item.GetType().GetProperty(parmName).GetValue(item,null) as string;
-                    if (itemParmValue.Equals(parmValue))
+                    foreach(PropertyInfo pi in item.GetType().GetProperties())
                     {
-                        result = item;
+                        if(FileHelper.PropertyMatch(pi.Name, parmName))
+                        {
+                            string itemParmValue = item.GetType().GetProperty(pi.Name).GetValue(item, null) as string;
+                            if (itemParmValue.Equals(parmValue))
+                            {
+                                result = item;
+                            }
+                            break;
+                        }
+                    }
+                    if (result != null)
+                    {
                         break;
                     }
                 }
@@ -42,20 +52,42 @@ namespace MVC.Daos.FileImpl
         }
         public List<T> FindAll(string sql)
         {
-            List<T> list = null;
+            List<T> list;
             using (StreamReader sr = new StreamReader(FileHelper.GetFileNameBySql(sql), Encoding.UTF8))
             {
                 list = JsonConvert.DeserializeObject<List<T>>(sr.ReadToEnd());
             }
-            return list;
+            if (list == null)
+            {
+                return new List<T>();
+            }
+            else
+            {
+                return list;
+            } 
+        }
+        public IDictionary<string,string> FindAllDic(string sql)
+        {
+            IDictionary<string, string> list;
+            using (StreamReader sr = new StreamReader(FileHelper.GetFileNameBySql(sql), Encoding.UTF8))
+            {
+                list = JsonConvert.DeserializeObject<IDictionary<string, string>>(sr.ReadToEnd());
+            }
+            if (list == null)
+            {
+                return new Dictionary<string, string>();
+            }
+            else
+            {
+                return list;
+            }
         }
         public PageResult<T> nativeQuerySql(string sql,string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
         {
             Debug.Assert(startIndex>=0);
-            Debug.Assert(pageSize >= 10&& pageSize<=100);
-            PageResult<T> pageRsult=null;
+            Debug.Assert(pageSize >0&& pageSize<=100);
             List<T> list=null;
-            //List<T> content;
+            List<T> result=null;
             using (StreamReader sr = new StreamReader(FileHelper.GetFileNameBySql(sqlCount), Encoding.UTF8))
             {
                 list = JsonConvert.DeserializeObject<List<T>>(sr.ReadToEnd());
@@ -64,16 +96,16 @@ namespace MVC.Daos.FileImpl
             {
                 if (startIndex == 0)
                 {
-                    //content = list.Take(pageSize).ToList();
-                    pageRsult = new PageResult<T>(startIndex, pageSize, list.Count, list.Take(pageSize).ToList());
+                    result = list.Take(pageSize).ToList();
+                    //pageRsult = new PageResult<T>(startIndex, pageSize, list.Count, list.Take(pageSize).ToList());
                 }
                 else if(startIndex< list.Count)
                 {
-                    //content = list.Skip(startIndex).Take(pageSize).ToList();
-                    pageRsult = new PageResult<T>(startIndex, pageSize, list.Count, list.Skip(startIndex).Take(pageSize).ToList());
+                    result = list.Skip(startIndex).Take(pageSize).ToList();
+                    //pageRsult = new PageResult<T>(startIndex, pageSize, list.Count, list.Skip(startIndex).Take(pageSize).ToList());
                 }  
             }
-            return pageRsult;
+            return new PageResult<T>(startIndex, pageSize, list.Count, result);
         }
 
         public List<T> nativeQuerySql(string sql, IDictionary<string, object> parms)

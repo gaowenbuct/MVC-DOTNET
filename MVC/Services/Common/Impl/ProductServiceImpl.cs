@@ -6,6 +6,7 @@ using System.Web;
 using MVC.Models.Common;
 using MVC.Daos;
 using MVC.Cache;
+using MVC.Utils;
 
 namespace MVC.Services.Common.Impl
 {
@@ -16,10 +17,16 @@ namespace MVC.Services.Common.Impl
             BaseDao<Series> baseDao = DaoFactory<Series>.CreateBaseDao(typeof(Series));
             return baseDao.FindAll("SELECT XSCXFL AS SeriesCode,XSCXFC AS SeriesName FROM SJVDTALIB.XSM11 SERIES WHERE ZMDWDM='08'");
         }
+        public List<Model> doFindModelAll()
+        {
+            BaseDao<Model> baseDao = DaoFactory<Model>.CreateBaseDao(typeof(Model));
+            return baseDao.FindAll("SELECT BSCLDM AS ModelCode,XSCLMC AS ModelName,XSCXFL SeriesCode FROM SJVDTALIB.KCM09 MODEL WHERE ZMDWDM='08'");
+        }
         public List<Color> doFindColorAll()
         {
             BaseDao<Color> baseDao = DaoFactory<Color>.CreateBaseDao(typeof(Color));
-            return baseDao.FindAll("SELECT XSYSDM AS ColorCode,XSYSMC AS ColorName,'' AS ModelCode FROM SJVDTALIB.XSM04 COLOR WHERE ZMDWDM='08'");
+            return baseDao.FindAll("SELECT VW_COLOR.XSYSDM AS VwColorCode,BSYSDM AS ColorCode,XSYSMC AS ColorName,'' AS ModelCode " +
+                "FROM SJVDTALIB.XSM04 VW_COLOR,SJVDTALIB.KCM14 COLOR WHERE VW_COLOR.ZMDWDM='08' AND COLOR.ZMDWDM='08' AND VW_COLOR.XSYSDM=COLOR.XSYSDM");
         }
         public List<Interior> doFindInteriorAll()
         {
@@ -32,27 +39,25 @@ namespace MVC.Services.Common.Impl
             getLogger(this).Info("doFindModelGroupAll begin");
             BaseDao<ModelGroup> baseDao = DaoFactory<ModelGroup>.CreateBaseDao(typeof(ModelGroup));
             List<ModelGroup> list=baseDao.FindAll("SELECT XSCLDM AS ModelGroupCode,BSCLDM AS ModelCode,CHAR(KCMDY1) AS ModelYear,KCVER1 AS ModelVersion,BSNSYM AS InteriorCode," +
-                "CYCLP1 AS PrList, BSPNXH AS ModelPrNo FROM SJVDTALIB.KCM32 MODEL_GROUP WHERE ZMDWDM = '08' AND KCMDY1>2012");
+                "CYCLP1 AS PrList, BSPNXH AS ModelPrNo FROM SJVDTALIB.KCM32 MODEL_GROUP WHERE ZMDWDM = '08' AND KCMDY1>="+ CfgReader.ModelGroupDataBeginYear);
             getLogger(this).Info("doFindModelGroupAll end");
             return list;
         }
-        public List<Model> doFindModel(string seriesCode, string modelCode)
+        public IDictionary<string, string> doFindModelList(string seriesCode, string modelCode)
         {
-            BaseDao<Model> baseDao = DaoFactory<Model>.CreateBaseDao(typeof(Model));
-            IDictionary<string, object> parms = new Dictionary<string, object>();
-            string sql = "SELECT BSCLDM AS ModelCode,XSCLMC AS ModelName,XSCXFL SeriesCode FROM SJVDTALIB.KCM09 MODEL WHERE ZMDWDM='08'";
+            IDictionary<string, Model> modelDic = CommonCache.GetModelDic();
             if (!string.IsNullOrWhiteSpace(seriesCode))
             {
-                sql = sql + " AND XSCXFL=@SERIES_CODE";
-                parms.Add("SERIES_CODE", seriesCode);
+                return modelDic.Where(x => x.Value.SeriesCode== seriesCode).ToDictionary(x => x.Key, x => x.Value.ModelName);
             }
-            if (!string.IsNullOrWhiteSpace(modelCode))
+            else if (!string.IsNullOrWhiteSpace(modelCode))
             {
-                //sql = sql + " AND BSCLDM LIKE '%'||@MODEL_CODE||'%'";
-                sql = sql + " AND LOCATE('"+ modelCode + "',BSCLDM)>0";
-                //parms.Add("MODEL_CODE", modelCode);
+                return modelDic.Where(x => x.Key.Contains(modelCode)).ToDictionary(x => x.Key, x => x.Value.ModelName);
             }
-            return baseDao.nativeQuerySql(sql,parms);
+            else
+            {
+                return modelDic.ToDictionary(x => x.Key, x => x.Value.ModelName);
+            }
         }
         public List<Color> doFindModelColor(string modelCode,string color)
         {
@@ -91,8 +96,10 @@ namespace MVC.Services.Common.Impl
         }
         public Model doGetModelInfo(string modelCode)
         {
-            BaseDao<Model> baseDao = DaoFactory<Model>.CreateBaseDao(typeof(Model));
-            return baseDao.FindByid("SELECT BSCLDM AS ModelCode,XSCLMC AS ModelName,XSCXFL SeriesCode FROM SJVDTALIB.KCM09 MODEL WHERE ZMDWDM='08' AND BSCLDM =@MODEL_CODE", "MODEL_CODE", modelCode);
+            IDictionary<string, Model> modelDic = CommonCache.GetModelDic();
+            return modelDic[modelCode];
+            //BaseDao<Model> baseDao = DaoFactory<Model>.CreateBaseDao(typeof(Model));
+            //return baseDao.FindByid("SELECT BSCLDM AS ModelCode,XSCLMC AS ModelName,XSCXFL SeriesCode FROM SJVDTALIB.KCM09 MODEL WHERE ZMDWDM='08' AND BSCLDM =@MODEL_CODE", "MODEL_CODE", modelCode);
         }
         public Color doGetColorInfo(string colorCode)
         {
@@ -131,7 +138,7 @@ namespace MVC.Services.Common.Impl
             }
             else
             {
-                return CommonCache.GetColorDic();
+                return colorDic;
             }
         }
         public IDictionary<string, string> doFindInteriorList(string interiorCode, string interiorName)

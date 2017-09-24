@@ -29,7 +29,14 @@ namespace MVC.Daos.Db2Impl
                     int i = 0;
                     foreach (PropertyInfo pi in propertyInfo)
                     {
-                        pi.SetValue(t, rdr.GetValue(i++));
+                        try
+                        {
+                            pi.SetValue(t, rdr.GetValue(i++));
+                        }
+                        catch (Exception ex)
+                        {
+                            log.Error("字段类型错误，" + pi.Name + ":" + ex.Message);
+                        }
                     }
                     result= t;
                 }
@@ -65,8 +72,32 @@ namespace MVC.Daos.Db2Impl
             }
             return list;
         }
+        public IDictionary<string,string> FindAllDic(string sql)
+        {
+            IDictionary<string, string> list = new Dictionary<string, string>();
+            using (iDB2DataReader rdr = DB2Helper.ExecuteReader(DB2Helper.ConnectionString, CommandType.Text, sql))
+            {
+                if (rdr.Read())
+                {
+                    do
+                    {
+                        try
+                        {
+                            list.Add(rdr.GetString(0), rdr.GetString(1));
+                        }
+                        catch (Exception ex)
+                        {
+                            log.Error("字段类型错误，" + rdr.GetValue(0).ToString() + ":"+ rdr.GetValue(1).ToString() +":"+ ex.Message);
+                        }
+                    } while (rdr.Read());
+                }
+            }
+            return list;
+        }
         public PageResult<T> nativeQuerySql(string sql,string sqlCount, IDictionary<string, object> parms, int startIndex, int pageSize)
         {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(pageSize > 0 && pageSize <= 100);
             List<T> list = list = new List<T>();
             int count = 0;
             iDB2Parameter[] db2Parms=null;

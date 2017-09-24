@@ -9,21 +9,21 @@ namespace MVC.Utils
 {
     public class FileHelper
     {
-        private static string path = "D:\\study\\net\\data";//AppDomain.CurrentDomain.BaseDirectory;
+        private static string path = CfgReader.FileDataFilePath;//AppDomain.CurrentDomain.BaseDirectory;
         private static string ParseTableNameFromSQL(string sql)
         {
             if(string.IsNullOrWhiteSpace(sql))
             {
-                return "";
+                return string.Empty;
             }
             string[] sArray=sql.Split(new string[] { "FROM", "WHERE" },3, StringSplitOptions.None);
             if (sArray.Length>1)
             {
-                return sArray[1].Trim().Trim('"');
+                return sArray[1].Trim().Trim('"').Split(new string[] { " ","," }, 3, StringSplitOptions.None)[1];
             }
             else
             {
-                return "";
+                return string.Empty;
             }
         }
         public static string GetFileNameBySql(string sql)
@@ -57,6 +57,17 @@ namespace MVC.Utils
                     dest[point++] = c;
             }
             return new String(dest, 0, point);
+        }
+        public static bool PropertyMatch(string propertyName,string parmNameName)
+        {
+            if (propertyName.ToUpper().Equals(parmNameName.Replace("_", "")))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

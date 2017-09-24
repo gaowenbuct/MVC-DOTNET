@@ -9,10 +9,11 @@ namespace MVC.Services.Common
     public interface ProductService:BaseService
     {
         List<Series> doFindSeriesAll();
+        List<Model> doFindModelAll();
         List<Color> doFindColorAll();
         List<Interior> doFindInteriorAll();
         List<ModelGroup> doFindModelGroupAll();
-        List<Model> doFindModel(string seriesCode,string modelCode);
+        IDictionary<string, string> doFindModelList(string seriesCode,string modelCode);
         List<Color> doFindModelColor(string modelCode,string color);
         List<Interior> doFindModelInterior(string modelCode,string interior);
         Model doGetModelInfo(string modelCode);
