@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MVC.Models.Common;
-using MVC.Services.Common.Impl;
+using MVC.Models.Product;
+using MVC.Services.Product;
+using MVC.Services.Product.Impl;
 using MVC.Utils;
 using Newtonsoft.Json;
 using System;
@@ -10,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MVC.Services.Common.Impl.Tests
+namespace MVC.Services.Product.Impl.Tests
 {
     [TestClass()]
     public class ProductServiceImplTests

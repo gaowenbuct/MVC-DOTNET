@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using MVC.Models.Common;
+using MVC.Models.Product;
 using MVC.Daos;
 using MVC.Cache;
 using MVC.Utils;
 
-namespace MVC.Services.Common.Impl
+namespace MVC.Services.Product.Impl
 {
     public class ProductServiceImpl : BaseServiceImpl, ProductService
     {
@@ -25,8 +25,10 @@ namespace MVC.Services.Common.Impl
         public List<Color> doFindColorAll()
         {
             BaseDao<Color> baseDao = DaoFactory<Color>.CreateBaseDao(typeof(Color));
-            return baseDao.FindAll("SELECT VW_COLOR.XSYSDM AS VwColorCode,BSYSDM AS ColorCode,XSYSMC AS ColorName,'' AS ModelCode " +
-                "FROM SJVDTALIB.XSM04 VW_COLOR,SJVDTALIB.KCM14 COLOR WHERE VW_COLOR.ZMDWDM='08' AND COLOR.ZMDWDM='08' AND VW_COLOR.XSYSDM=COLOR.XSYSDM");
+            string sql = "SELECT XSYSDM AS ColorCode,XSYSMC AS ColorName,'' AS ModelCode FROM SJVDTALIB.XSM04 COLOR WHERE COLOR.ZMDWDM='08'";
+            return baseDao.FindAll(sql);
+            //return baseDao.FindAll("SELECT VW_COLOR.XSYSDM AS VwColorCode,BSYSDM AS ColorCode,XSYSMC AS ColorName,'' AS ModelCode " +
+                //"FROM SJVDTALIB.XSM04 VW_COLOR,SJVDTALIB.KCM14 COLOR WHERE VW_COLOR.ZMDWDM='08' AND COLOR.ZMDWDM='08' AND VW_COLOR.XSYSDM=COLOR.XSYSDM");
         }
         public List<Interior> doFindInteriorAll()
         {
@@ -45,7 +47,7 @@ namespace MVC.Services.Common.Impl
         }
         public IDictionary<string, string> doFindModelList(string seriesCode, string modelCode)
         {
-            IDictionary<string, Model> modelDic = CommonCache.GetModelDic();
+            IDictionary<string, Model> modelDic = ProductCache.GetModelDic();
             if (!string.IsNullOrWhiteSpace(seriesCode))
             {
                 return modelDic.Where(x => x.Value.SeriesCode== seriesCode).ToDictionary(x => x.Key, x => x.Value.ModelName);
@@ -96,14 +98,14 @@ namespace MVC.Services.Common.Impl
         }
         public Model doGetModelInfo(string modelCode)
         {
-            IDictionary<string, Model> modelDic = CommonCache.GetModelDic();
+            IDictionary<string, Model> modelDic = ProductCache.GetModelDic();
             return modelDic[modelCode];
             //BaseDao<Model> baseDao = DaoFactory<Model>.CreateBaseDao(typeof(Model));
             //return baseDao.FindByid("SELECT BSCLDM AS ModelCode,XSCLMC AS ModelName,XSCXFL SeriesCode FROM SJVDTALIB.KCM09 MODEL WHERE ZMDWDM='08' AND BSCLDM =@MODEL_CODE", "MODEL_CODE", modelCode);
         }
         public Color doGetColorInfo(string colorCode)
         {
-            IDictionary<string, string> colorDic = CommonCache.GetColorDic();
+            IDictionary<string, string> colorDic = ProductCache.GetColorDic();
             Color color = null;
             if (colorDic.ContainsKey(colorCode))
             {
@@ -115,7 +117,7 @@ namespace MVC.Services.Common.Impl
         }
         public Interior doGetInteriorInfo(string interiorCode)
         {
-            IDictionary<string, string> interiorDic = CommonCache.GetInteriorDic();
+            IDictionary<string, string> interiorDic = ProductCache.GetInteriorDic();
             Interior interior = null;
             if (interiorDic.ContainsKey(interiorCode))
             {
@@ -127,7 +129,7 @@ namespace MVC.Services.Common.Impl
         }
         public IDictionary<string, string> doFindColorList(string colorCode, string colorName)
         {
-            IDictionary<string, string> colorDic = CommonCache.GetColorDic();
+            IDictionary<string, string> colorDic = ProductCache.GetColorDic();
             if (!string.IsNullOrWhiteSpace(colorCode))
             {
                 return colorDic.Where(x => x.Key.Contains(colorCode)).ToDictionary(x => x.Key, x => x.Value);
@@ -143,7 +145,7 @@ namespace MVC.Services.Common.Impl
         }
         public IDictionary<string, string> doFindInteriorList(string interiorCode, string interiorName)
         {
-            IDictionary<string, string> interiorDic = CommonCache.GetInteriorDic();
+            IDictionary<string, string> interiorDic = ProductCache.GetInteriorDic();
             if (!string.IsNullOrWhiteSpace(interiorCode))
             {
                 return interiorDic.Where(x => x.Key.Contains(interiorCode)).ToDictionary(x => x.Key, x => x.Value);
@@ -154,7 +156,7 @@ namespace MVC.Services.Common.Impl
             }
             else
             {
-                return CommonCache.GetInteriorDic();
+                return ProductCache.GetInteriorDic();
             }
         }
     }

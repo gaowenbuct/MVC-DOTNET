@@ -6,7 +6,6 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using MVC.App_Start;
 using System.IO;
 
 namespace MVC
@@ -16,13 +15,9 @@ namespace MVC
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
-            //GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             //BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            /*ViewEngines.Engines.Clear();
-            ViewEngines.Engines.Add(new MyViewEngine());*/
 
             log4net.Config.XmlConfigurator.Configure
                 (new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "log4net.xml"));

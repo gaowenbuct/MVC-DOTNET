@@ -14,6 +14,7 @@ namespace MVC.Services.Retail.Vo
         public string InvoiceDate { get; set; }
         public string ModelCode { get; set; }
         public string Color { get; set; }
+        public string Color1 { get; set; }
         public string ModelYear { get; set; }
         public string ModelVersion { get; set; }
         public string Interior { get; set; }

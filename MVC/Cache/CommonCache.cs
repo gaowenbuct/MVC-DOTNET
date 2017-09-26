@@ -11,56 +11,40 @@ namespace MVC.Cache
 {
     public class CommonCache
     {
-        private static ProductService productService = new ProductServiceImpl();
-        private static IDictionary<string,string> seriesDic;
-        private static IDictionary<string, Model> modelDic;
-        private static IDictionary<string, string> colorDic;
-        private static IDictionary<string, string> interiorDic;
-        private static IDictionary<string, ModelGroup> modelGroupDic;
-        public static IDictionary<string, string> GetSeriesDic()
+        private static IDictionary<string, string> regionDic;
+        public static IDictionary<string, string> GetRegionDic()//ISM12
         {
-            if (seriesDic == null)
+            if (regionDic == null)
             {
-                List<Series> list = productService.doFindSeriesAll();
-                seriesDic=list.ToDictionary(x => x.SeriesCode, x => x.SeriesName);
+                regionDic = new Dictionary<string, string>
+                {
+                    {"2216666","江苏"},
+                    {"2036666","华北"},
+                    {"2208888","大用户"},
+                    {"2436666","中南"},
+                    {"2456666","华中"},
+                    {"2716666","西北"},
+                    {"2256666","山东"},
+                    {"2109999","北方"},
+                    {"2319999","华东"},
+                    {"2619999","西南"},
+                    {"2519999","华南"},
+                    {"2119999","东北"},
+                    {"2659999","云桂黔"}
+                };
             }
-            return seriesDic;
+            return regionDic;
         }
-        public static IDictionary<string, Model> GetModelDic()
+        private static CommonService commonService = new CommonServiceImpl();
+        private static IDictionary<string, County> countyDic;
+        public static IDictionary<string, County> GetCountyDic()//ISM10,09,08
         {
-            if (modelDic == null)
+            if (countyDic == null)
             {
-                List<Model> list = productService.doFindModelAll();
-                modelDic = list.ToDictionary(x => x.ModelCode, x => x);
+                List<County> list = commonService.doFindCountyAll();
+                countyDic = list.ToDictionary(x => x.CountyCode, x => x);
             }
-            return modelDic;
-        }
-        public static IDictionary<string, string> GetColorDic()
-        {
-            if (colorDic == null)
-            {
-                List<Color> list = productService.doFindColorAll();
-                colorDic = list.ToDictionary(x => x.VwColorCode, x => x.ColorName+"("+x.ColorCode+")");
-            }
-            return colorDic;
-        }
-        public static IDictionary<string, string> GetInteriorDic()
-        {
-            if (interiorDic == null)
-            {
-                List<Interior> list = productService.doFindInteriorAll();
-                interiorDic = list.ToDictionary(x => x.InteriorCode, x => x.InteriorName);
-            }
-            return interiorDic;
-        }
-        public static IDictionary<string, ModelGroup> GetModelGroupDic()
-        {
-            if (modelGroupDic == null)
-            {
-                List<ModelGroup> list = productService.doFindModelGroupAll();
-                modelGroupDic = list.ToDictionary(x => x.ModelCode+x.InteriorCode+x.ModelPrNo, x=>x );
-            }
-            return modelGroupDic;
+            return countyDic;
         }
     }
 }

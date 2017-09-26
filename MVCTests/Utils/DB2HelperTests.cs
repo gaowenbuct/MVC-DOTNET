@@ -27,6 +27,21 @@ namespace MVC.Utils.Tests
             object val = cmd.ExecuteScalar();
             return val;
         }
+
+        public static Object DB2Select1()
+        {
+            iDB2Connection conn = new iDB2Connection(DB2Helper.ConnectionString);
+            string sql = "SELECT VALUE FROM SEQ_TABLE WHERE KEY=@KEY FOR UPDATE";
+
+            iDB2Command cmd = new iDB2Command();
+            conn.Open();
+            cmd.Connection = conn;
+            cmd.CommandText = sql;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add(new iDB2Parameter("@KEY", "USER"));
+            object val = cmd.ExecuteScalar();
+            return val;
+        }
         
         public void GetSequenceTest()
         {

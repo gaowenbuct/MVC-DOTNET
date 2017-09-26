@@ -6,9 +6,10 @@ using System.Web;
 
 namespace MVC.Services.System
 {
-    public interface DealerUserService
+    public interface DealerService
     {
         string doGetDealerCodeByUsername(string username);
         DealerUser doGetDealerUserInfo(string username);
+        List<Dealer> doFindDealerAll();
     }
 }

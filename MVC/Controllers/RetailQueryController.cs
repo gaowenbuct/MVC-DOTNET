@@ -22,7 +22,7 @@ namespace MVC.Controllers
     {
         protected static log4net.ILog log = log4net.LogManager.GetLogger(typeof(RetailQueryController));
         private static readonly RetailQueryService retailQueryService = new RetailQueryServiceImpl();
-        private static readonly DealerUserService dealerUserService = new DealerUserServiceImpl();
+        private static readonly DealerService dealerUserService = new DealerServiceImpl();
 
         public ActionResult RetailOrderQuery(string AHDCZXM,string AEBPSWD,string ALWEBQRYID)
         {
@@ -105,7 +105,6 @@ namespace MVC.Controllers
 
         public ActionResult RetailOrderQueryExport()
         {
-            //List<RetailOrderQueryVo> list = retailQueryService.doFindRetailOrderByCondition(Request.QueryString);
             byte[] result = retailQueryService.ExportRetailOrderList(Request.QueryString);
             log.Info("导出数据" + Request.QueryString.ToString());
             return File(result, "text/csv", "RetailOrderQueryExport.csv");

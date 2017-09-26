@@ -35,7 +35,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -175,8 +175,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Cache\CommonCache.cs" />
+    <Compile Include="Cache\ProductCache.cs" />
     <Compile Include="Cache\RetailCache.cs" />
-    <Compile Include="Controllers\CommonController.cs" />
+    <Compile Include="Cache\SystemCache.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RetailQueryController.cs" />
     <Compile Include="Controllers\UserApiController.cs" />
@@ -189,18 +191,17 @@
     <Compile Include="Daos\FileImpl\UserDaoImpl.cs" />
     <Compile Include="Daos\OracleImpl\BaseDaoImpl.cs" />
     <Compile Include="Daos\OracleImpl\UserDaoImpl.cs" />
-    <Compile Include="Daos\RetailOrderDao.cs" />
     <Compile Include="Daos\UserDao.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Common\Color.cs" />
-    <Compile Include="Models\Retail\County.cs" />
-    <Compile Include="Models\Retail\Dealer.cs" />
-    <Compile Include="Models\Common\Interior.cs" />
-    <Compile Include="Models\Common\Model.cs" />
-    <Compile Include="Models\Common\ModelGroup.cs" />
-    <Compile Include="Models\Common\Series.cs" />
+    <Compile Include="Models\Product\Color.cs" />
+    <Compile Include="Models\Common\County.cs" />
+    <Compile Include="Models\System\Dealer.cs" />
+    <Compile Include="Models\Product\Interior.cs" />
+    <Compile Include="Models\Product\Model.cs" />
+    <Compile Include="Models\Product\ModelGroup.cs" />
+    <Compile Include="Models\Product\Series.cs" />
     <Compile Include="Models\Retail\DealerStockVehicleInfo.cs" />
     <Compile Include="Models\Retail\SalesPerson.cs" />
     <Compile Include="Models\System\DealerUser.cs" />
@@ -208,21 +209,23 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\BaseServiceImpl.cs" />
-    <Compile Include="Services\Common\Impl\ProductServiceImpl.cs" />
-    <Compile Include="Services\Common\ProductService.cs" />
+    <Compile Include="Services\Common\CommonService.cs" />
+    <Compile Include="Services\Common\Impl\CommonServiceImpl.cs" />
+    <Compile Include="Services\Product\Impl\ProductServiceImpl.cs" />
+    <Compile Include="Services\Product\ProductService.cs" />
     <Compile Include="Services\Retail\Impl\RetailQueryServiceImpl.cs" />
     <Compile Include="Services\Retail\Impl\RetailServiceImpl.cs" />
     <Compile Include="Services\Retail\RetailService.cs" />
     <Compile Include="Services\Retail\RetailQueryService.cs" />
-    <Compile Include="Services\Retail\Vo\RetailOrderQueryDetailsVo.cs" />
-    <Compile Include="Services\Retail\Vo\RetailOrderQueryExportVo.cs" />
-    <Compile Include="Services\Retail\Vo\RetailOrderQueryListVo.cs" />
+    <Compile Include="Models\Retail\RetailOrderQueryDetailsVo.cs" />
+    <Compile Include="Models\Retail\RetailOrderQueryExportVo.cs" />
+    <Compile Include="Models\Retail\RetailOrderQueryListVo.cs" />
+    <Compile Include="Services\System\Impl\DealerServiceImpl.cs" />
+    <Compile Include="Services\System\DealerService.cs" />
     <Compile Include="Services\System\Impl\UserApiServiceImpl.cs" />
     <Compile Include="Services\System\Impl\UserServiceImpl.cs" />
-    <Compile Include="Services\System\Impl\DealerUserServiceImpl.cs" />
     <Compile Include="Services\System\UserApiService.cs" />
     <Compile Include="Services\System\UserService.cs" />
-    <Compile Include="Services\System\DealerUserService.cs" />
     <Compile Include="Utils\CfgReader.cs" />
     <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\Db2Helper.cs" />
@@ -276,7 +279,6 @@
     <Content Include="Content\js\dialog_msg.js" />
     <Content Include="Content\js\jqueryPlugin.js" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="log4net.xml" />
     <Content Include="ApplicationInsights.config">
@@ -295,11 +297,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\User\Create.cshtml" />
-    <Content Include="Views\User\Error.cshtml" />
-    <Content Include="Views\User\List.cshtml" />
-    <Content Include="Views\User\Login.cshtml" />
-    <Content Include="Views\User\Welcome.cshtml" />
     <Content Include="Views\RetailQuery\RetailOrderQuery.cshtml" />
     <Content Include="Views\RetailQuery\RetailOrderQueryList.cshtml" />
     <Content Include="Views\RetailQuery\RetailOrderQueryDetails.cshtml" />
@@ -316,19 +313,15 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\User\Create.cshtml" />
+    <Content Include="Views\User\Error.cshtml" />
+    <Content Include="Views\User\List.cshtml" />
+    <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\User\Welcome.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

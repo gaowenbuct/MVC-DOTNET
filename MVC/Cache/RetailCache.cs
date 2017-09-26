@@ -331,61 +331,27 @@ namespace MVC.Cache
                 return string.Empty;
             }
         }
-        private static IDictionary<string, string> regionDic;
-        public static IDictionary<string, string> GetRegionDic()//ISM12
-        {
-            if (regionDic == null)
-            {
-                regionDic = new Dictionary<string, string>
-                {
-                    {"2216666","江苏"},
-                    {"2036666","华北"},
-                    {"2208888","大用户"},
-                    {"2436666","中南"},
-                    {"2456666","华中"},
-                    {"2716666","西北"},
-                    {"2256666","山东"},
-                    {"2109999","北方"},
-                    {"2319999","华东"},
-                    {"2619999","西南"},
-                    {"2519999","华南"},
-                    {"2119999","东北"},
-                    {"2659999","云桂黔"}
-                };
-            }
-            return regionDic;
-        }
-        private static IDictionary<string, County> countyDic;
-        private static IDictionary<string, Dealer> dealerDic;
-        private static IDictionary<string, string> salesPersonDic;
-        private static IDictionary<string, string> insuranceCompanyDic;
-        public static IDictionary<string, County> GetCountyDic()//ISM10,09,08
-        {
-            if (countyDic == null)
-            {
-                List<County> list = retailService.doFindCountyAll();
-                countyDic = list.ToDictionary(x => x.CountyCode, x => x);
-            }
-            return countyDic;
-        }
-        public static IDictionary<string, Dealer> GetDealerDic()
-        {
-            if (dealerDic == null)
-            {
-                List<Dealer> list = retailService.doFindDealerAll();
-                dealerDic = list.ToDictionary(x => x.DealerCode, x => x);
-            }
-            return dealerDic;
-        }
+        private static IDictionary<string, string> salesPersonDic;   
         public static IDictionary<string, string> GetSalesPersonDic()//ISM40
         {
             if (salesPersonDic == null)
             {
                 List<SalesPerson> list = retailService.doFindSalesPersonAll();
-                salesPersonDic = list.ToDictionary(x => x.DealerCode+x.SalesPersonCode, x => x.SalesPersonName);
+                //salesPersonDic = list.ToDictionary(x => x.DealerCode+x.SalesPersonCode, x => x.SalesPersonName);
+                salesPersonDic = new Dictionary<string, string>();
+                foreach(var item in list)
+                {
+                    byte[] byteArray = System.Text.Encoding.Default.GetBytes(item.SalesPersonCode.Substring(1));
+
+                    if ((byteArray[0] >= 'A'&& byteArray[0] <= 'Z')|| (byteArray[0] >= '0' && byteArray[0] <= '9'))
+                    {
+                        salesPersonDic.Add(item.DealerCode + item.SalesPersonCode, item.SalesPersonName);
+                    }   
+                }
             }
             return salesPersonDic;
         }
+        private static IDictionary<string, string> insuranceCompanyDic;
         public static IDictionary<string, string> GetInsuranceCompanyDic()//VSM29
         {
             if (insuranceCompanyDic == null) 

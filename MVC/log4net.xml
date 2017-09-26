@@ -27,7 +27,7 @@
     <param name="AppendToFile" value="true" />
     <param name="RollingStyle" value="Size" />
     <param name="MaxSizeRollBackups" value="10" />
-    <param name="MaxFileSize" value="10240" />
+    <param name="MaxFileSize" value="10240000" />
     <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <param name="StaticLogFileName" value="true" />
     <layout type="log4net.Layout.PatternLayout">
@@ -51,7 +51,7 @@
       <param name="AppendToFile" value="true" />
       <param name="RollingStyle" value="Size" />
       <param name="MaxSizeRollBackups" value="10" />
-      <param name="MaxFileSize" value="10240" />
+      <param name="MaxFileSize" value="10240000" />
       <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
       <param name="StaticLogFileName" value="true" />
       <layout type="log4net.Layout.PatternLayout">
@@ -63,7 +63,7 @@
       <param name="AppendToFile" value="true" />
       <param name="RollingStyle" value="Size" />
       <param name="MaxSizeRollBackups" value="10" />
-      <param name="MaxFileSize" value="10240" />
+      <param name="MaxFileSize" value="10240000" />
       <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
       <param name="StaticLogFileName" value="true" />
       <layout type="log4net.Layout.PatternLayout">
@@ -75,7 +75,7 @@
       <param name="AppendToFile" value="true" />
       <param name="RollingStyle" value="Size" />
       <param name="MaxSizeRollBackups" value="10" />
-      <param name="MaxFileSize" value="10240" />
+      <param name="MaxFileSize" value="10240000" />
       <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
       <param name="StaticLogFileName" value="true" />
       <layout type="log4net.Layout.PatternLayout">

@@ -123,6 +123,7 @@
             //$("#colorDialog").css("display", "none");
             //$("#interiorDialog").css("display", "none");
             $("#btnReturn").attr("disabled", "disabled");
+            $("#btnExport").removeAttr("disabled", "disabled");
             initDate();
             //$('#startDateOutStock').trigger("focus");
         });
@@ -248,6 +249,7 @@
         function f_search() {
             $("#startIndex").val("0");
             search();
+            $("#btnExport").removeAttr("disabled", "disabled");
         };
         function f_next() {
             $("#startIndex").val(Number($("#startIndex").val()) + Number($("#pageSize").val()));
@@ -280,14 +282,24 @@
                 });
             $("#btnReturn").attr("disabled", "disabled");
         };
+        function OpenDialog(url, w, h) {
+            var iTop2 = (window.screen.availHeight - 20 - h) / 2;
+            var iLeft2 = (window.screen.availWidth - 10 - w) / 2;
+            var params = 'menubar:no;dialogHeight=' + h + 'px;dialogWidth=' + w + 'px;dialogLeft=' + iLeft2 + 'px;dialogTop=' + iTop2 + 'px;resizable=yes;scrollbars=0;resizeable=0;center=yes;location:no;status:no'
+            var addDiv = $("<div id = 'tempDiv' style='left:0px;top:0px;position:absolute;width:100%;height:100%;background:rgba(0,0,0,0.4)!important;filter:alpha(opacity = 40);background:#000;z-index:1000;'></div>");
+            $(document.body).append(addDiv); 
+            window.open(url, addDiv, params);
+        }
+        function openWin(src, width, height, showScroll) {
+            window.showModalDialog(src, "", "location:No;status:No;help:No;dialogWidth:" + width + ";dialogHeight:" + height + ";scroll:" + showScroll + ";");
+        }  
         function f_export() {
             var fal = confirm('是否确定导出?');
             if (fal) {
                 if (!checkExportCondition(91)) 
                     return;   
-                var frm = document.forms['form'];
-                window.location.href = "RetailOrderQueryExport?"
-                    + $("#form").serialize();
+                $("#btnExport").attr("disabled", "disabled");
+                window.location.href = "RetailOrderQueryExport?"+ $("#form").serialize();
             };
         };
         function checkExportCondition(daysRange) {
@@ -313,7 +325,8 @@
     </div>
     <form id="form" name="form" theme="simple" method="post">
         <div class="right">
-            <div class="table"><!---->
+            <div class="table">
+                <!---->
                 <span id="title" class="title">零售信息查询和下载</span>
                 <input type="hidden" id="userType" name="userType" value="" />
                 <input type="hidden" id="username" name="username" value="@ViewData["username"]" />
@@ -434,8 +447,8 @@
                 <input type="button" id="btnExport" name="btnExport" class="button2" value="下载" onclick="f_export()" />
                 <input type="button" id="btnReset" name="btnReset" class="button2" value="重置" onclick="f_reset()" />
                 <input type="button" id="btnReturn" name="btnReturn" class="button2" value="返回" onclick="f_return()" />
-             </div>
-       </div><!---->
+            </div>
+        </div><!---->
     </form>
     <div id="content">
     </div>

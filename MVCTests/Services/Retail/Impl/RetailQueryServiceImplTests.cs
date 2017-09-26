@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MVC.Cache;
 using MVC.Services.Retail.Impl;
 using MVC.Services.Retail.Vo;
 using MVC.Utils;
@@ -29,19 +30,19 @@ namespace MVC.Services.Retail.Impl.Tests
             nvc.Add("endDateCreate", "2017-09-21");
             nvc.Add("remark", "Y");
             QueryCriteria queryCriteria = new QueryCriteria(nvc);
-            PageResult<RetailOrderQueryListVo> result=retailQueryService.QueryRetailOrderList(queryCriteria);
+            PageResult<RetailOrderQueryListVo> result = retailQueryService.QueryRetailOrderList(queryCriteria);
         }
         [TestMethod()]
         public void initData()
         {
             List<RetailOrderQueryListVo> list = new List<RetailOrderQueryListVo>();
             RetailOrderQueryListVo vo = null;
-           
+
             for (int i = 0; i <= 20; i++)
             {
                 vo = new RetailOrderQueryListVo();
-                vo.Vin = "VIN"+i;
-                vo.OrderNo = "ORDER"+i;
+                vo.Vin = "VIN" + i;
+                vo.OrderNo = "ORDER" + i;
                 list.Add(vo);
             }
 
@@ -50,6 +51,21 @@ namespace MVC.Services.Retail.Impl.Tests
                 sw.Write(JsonConvert.SerializeObject(list));
             }
             return;
+        }
+
+        [TestMethod()]
+        public void ExportRetailOrderListTest()
+        {
+            /*NameValueCollection nvc = new NameValueCollection();
+            nvc.Add("dealerCode", "2250010");
+            nvc.Add("regionCode", "2256666");
+            nvc.Add("startIndex", "0");
+            nvc.Add("pageSize", "3");
+            nvc.Add("startDateCreate", "2017-09-01");
+            nvc.Add("endDateCreate", "2017-09-21");
+            nvc.Add("remark", "Y");
+            byte[] result = retailQueryService.ExportRetailOrderList(nvc);*/
+            IDictionary<string, string> salesPersonDic = RetailCache.GetSalesPersonDic();
         }
     }
 }

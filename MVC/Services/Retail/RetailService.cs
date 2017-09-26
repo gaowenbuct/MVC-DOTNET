@@ -8,8 +8,6 @@ namespace MVC.Services.Retail.Impl
 {
     public interface RetailService
     {
-        List<County> doFindCountyAll();
-        List<Dealer> doFindDealerAll();
         List<SalesPerson> doFindSalesPersonAll();
         IDictionary<string, string> doFindInsuranceCompanyAll();
     }

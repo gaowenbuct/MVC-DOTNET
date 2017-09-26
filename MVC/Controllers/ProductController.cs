@@ -1,7 +1,7 @@
 ﻿using MVC.Cache;
-using MVC.Models.Common;
-using MVC.Services.Common;
-using MVC.Services.Common.Impl;
+using MVC.Models.Product;
+using MVC.Services.Product;
+using MVC.Services.Product.Impl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace MVC.Controllers
 {
-    public class CommonController : Controller
+    public class ProductController : Controller
     {
         private ProductService productService = new ProductServiceImpl();
         // GET: Common
@@ -19,7 +19,7 @@ namespace MVC.Controllers
             /*List<Series> seriesList = productService.doFindAllSeries();
             ViewData["seriesList"] = seriesList;*/
             ViewData["modelCode"] = modelCode;
-            ViewData["seriesList"] = CommonCache.GetSeriesDic();
+            ViewData["seriesList"] = ProductCache.GetSeriesDic();
             return View("ModelQuery");
         }
         public JsonResult ModelQuerySearch(string seriesCode,string modelCode)

@@ -71,10 +71,10 @@
     <Compile Include="Daos\FileImpl\BaseDaoImplTests.cs" />
     <Compile Include="Daos\OracleImpl\UserDaoImplTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Common\Impl\ProductServiceImplTests.cs" />
+    <Compile Include="Services\Product\Impl\ProductServiceImplTests.cs" />
     <Compile Include="Services\Retail\Impl\RetailQueryServiceImplTests.cs" />
     <Compile Include="Services\System\Impl\UserServiceImplTests.cs" />
-    <Compile Include="Services\System\Impl\VmsUserServiceImplTests.cs" />
+    <Compile Include="Services\System\Impl\DealerServiceImplTests.cs" />
     <Compile Include="Utils\DB2HelperTests.cs" />
     <Compile Include="Utils\FileHelperTests.cs" />
   </ItemGroup>

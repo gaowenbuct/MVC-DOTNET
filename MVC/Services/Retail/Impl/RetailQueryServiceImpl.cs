@@ -1,7 +1,9 @@
 ﻿using MVC.Cache;
 using MVC.Daos;
 using MVC.Models.Common;
+using MVC.Models.Product;
 using MVC.Models.Retail;
+using MVC.Models.System;
 using MVC.Services.Impl;
 using MVC.Services.Retail.Vo;
 using MVC.Utils;
@@ -9,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
+using System.Threading;
 
 namespace MVC.Services.Retail.Impl
 {
@@ -19,7 +22,7 @@ namespace MVC.Services.Retail.Impl
             PageResult<RetailOrderQueryListVo> result = doFindRetailOrderByCondition(queryCriteria);
             if (result.Content.Count > 0)
             {
-                IDictionary<string, ModelGroup> modelGroupDic = CommonCache.GetModelGroupDic();
+                IDictionary<string, ModelGroup> modelGroupDic = ProductCache.GetModelGroupDic();
                 foreach(var item in result.Content)
                 {
                     string key = item.ModelCode + item.Interior + item.PrList;
@@ -35,14 +38,14 @@ namespace MVC.Services.Retail.Impl
                         item.ModelVersion="数据错误";
                         item.PrList = item.PrList + "数据错误";
                     }
-                    IDictionary<string, string> colorDic = CommonCache.GetColorDic();
+                    IDictionary<string, string> colorDic = ProductCache.GetColorDic();
                     if ((item.Color!=null) &&colorDic.ContainsKey(item.Color))
                     {
-                        item.Color = item.Color+'-'+colorDic[item.Color];
+                        item.Color = item.Color+"("+item.Color1+")"+'-'+colorDic[item.Color];
                     }
                     else
                     {
-                        item.Color = item.Color + "数据错误";
+                        item.Color = item.Color + "(" + item.Color1 + ")";
                     }
                     item.SalesSource = RetailCache.GetSalesSource(item.SalesSource);
                     item.OrderStatus = RetailCache.GetOrderStatus(item.OrderStatus);
@@ -61,7 +64,7 @@ namespace MVC.Services.Retail.Impl
             if (!string.IsNullOrWhiteSpace(criteria.QueryCondition["remarkFlag"]) && "Y".Equals(criteria.QueryCondition["remarkFlag"]))
             {
                 selectFields = "RETAIL.CYVINM AS Vin,RETAIL.VSLSDD AS OrderNo,GET_DATE_TIME_STRING(RETAIL.VSLSRQ,RETAIL.VSLSSJ) AS RetailDateTime,GET_DATE_STRING(RETAIL.VSLCRQ) AS OutStockDate,GET_DATE_STRING(RETAIL.DMFPRQ) AS InvoiceDate," +
-                    "RETAIL.BSCLDM AS ModelCode,RETAIL.XSYSDM AS Color,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
+                    "RETAIL.BSCLDM AS ModelCode,RETAIL.XSYSDM AS Color,RETAIL.BSYSDM AS Color1,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
                     "REMARK.VSYHMC AS CustomerName,RETAIL.VSXSLY AS SalesSource,RETAIL.VSDDZT AS OrderStatus,RETAIL.VSSFFJ AS Accessory,EXTEND.VSJLBZ AS Club";
                 tableName="SJVDTALIB.IST15 RETAIL,SJVDTALIB.VST17 EXTEND,SJVDTALIB.VST19 REMARK";
                 condition = "AND RETAIL.ZMDWDM='08' AND EXTEND.ZMDWDM='08' AND REMARK.ZMDWDM='08' AND RETAIL.VSLSDD=EXTEND.VSLSDD AND RETAIL.VSLSDD=REMARK.VSLSDD " +
@@ -74,7 +77,7 @@ namespace MVC.Services.Retail.Impl
             else
             {
                 selectFields = "RETAIL.CYVINM AS Vin,RETAIL.VSLSDD AS OrderNo,GET_DATE_TIME_STRING(RETAIL.VSLSRQ,RETAIL.VSLSSJ) AS RetailDateTime,GET_DATE_STRING(RETAIL.VSLCRQ) AS OutStockDate,GET_DATE_STRING(RETAIL.DMFPRQ) AS InvoiceDate," +
-                    "RETAIL.BSCLDM AS ModelCode,RETAIL.XSYSDM AS Color,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
+                    "RETAIL.BSCLDM AS ModelCode,RETAIL.XSYSDM AS Color,RETAIL.BSYSDM AS Color1,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
                     "RETAIL.VSYHMC AS CustomerName,RETAIL.VSXSLY AS SalesSource,RETAIL.VSDDZT AS OrderStatus,RETAIL.VSSFFJ AS Accessory,EXTEND.VSJLBZ AS Club";
                 tableName = "SJVDTALIB.IST15 RETAIL,SJVDTALIB.VST17 EXTEND";
                 condition = "AND RETAIL.ZMDWDM='08' AND EXTEND.ZMDWDM='08' AND RETAIL.VSLSDD=EXTEND.VSLSDD " +
@@ -151,7 +154,7 @@ namespace MVC.Services.Retail.Impl
             RetailOrderQueryDetailsVo result = doFindRetailOrderById(orderNo, remarkFlag);
             if (result != null)
             {
-                IDictionary<string, ModelGroup> modelGroupDic = CommonCache.GetModelGroupDic();
+                IDictionary<string, ModelGroup> modelGroupDic = ProductCache.GetModelGroupDic();
                 string key = result.Model + result.Interior + result.PrList;
                 if (modelGroupDic.ContainsKey(key))
                 {
@@ -165,7 +168,7 @@ namespace MVC.Services.Retail.Impl
                     result.ModelVersion = "数据错误";
                     result.PrList = result.PrList + "数据错误";
                 }
-                IDictionary<string, Model> modelDic = CommonCache.GetModelDic();
+                IDictionary<string, Model> modelDic = ProductCache.GetModelDic();
                 if (result.Model!=null&&modelDic.ContainsKey(result.Model))
                 {
                     result.Model = result.Model + "-" + modelDic[result.Model].ModelName;
@@ -174,16 +177,16 @@ namespace MVC.Services.Retail.Impl
                 {
                     result.Model = result.Model + "数据错误";
                 }
-                IDictionary<string, string> colorDic = CommonCache.GetColorDic();
-                if (result.Color != null && colorDic.ContainsKey(result.Color))
+                IDictionary<string, string> colorDic = ProductCache.GetColorDic();
+                if ((result.Color != null) && colorDic.ContainsKey(result.Color))
                 {
-                    result.Color = result.Color + '-' + colorDic[result.Color];
+                    result.Color = result.Color + "(" + result.Color1 + ")" + '-' + colorDic[result.Color];
                 }
                 else
                 {
-                    result.Color = result.Color + "数据错误";
+                    result.Color = result.Color + "(" + result.Color1 + ")";
                 }
-                IDictionary<string, string> interiorDic = CommonCache.GetInteriorDic();
+                IDictionary<string, string> interiorDic = ProductCache.GetInteriorDic();
                 if (result.Interior != null && interiorDic.ContainsKey(result.Interior))
                 {
                     result.Interior = result.Interior + '-' + interiorDic[result.Interior];
@@ -192,7 +195,7 @@ namespace MVC.Services.Retail.Impl
                 {
                     result.Interior = result.Interior + "数据错误";
                 }
-                IDictionary<string, County> countyDic = RetailCache.GetCountyDic();
+                IDictionary<string, County> countyDic = CommonCache.GetCountyDic();
                 if (result.County != null && countyDic.ContainsKey(result.County))
                 {
                     result.County = result.County + '-' + countyDic[result.County].ProvinceName+'-'+ countyDic[result.County].CityName+
@@ -223,6 +226,7 @@ namespace MVC.Services.Retail.Impl
                 result.SalesType = RetailCache.GetVehiclePurpose(result.SalesType);
                 result.UsePoint = RetailCache.GetYesNo(result.UsePoint);
                 result.ThreeGuarantees = RetailCache.GetYesNo(result.ThreeGuarantees);
+                result.CustomerType = RetailCache.GetCustomerType(result.CustomerType);
             }
             return result;
         }
@@ -236,7 +240,7 @@ namespace MVC.Services.Retail.Impl
             {
                 selectFields = "RETAIL.CYVINM AS Vin,RETAIL.VSLSDD AS OrderNo,GET_DATE_TIME_STRING(RETAIL.VSLSRQ,RETAIL.VSLSSJ) AS RetailDateTime," +
                     "GET_DATE_STRING(RETAIL.VSLCRQ) AS OutStockDate,GET_DATE_STRING(RETAIL.DMFPRQ) AS InvoiceDate," +
-                    "RETAIL.BSCLDM AS Model,RETAIL.XSYSDM AS Color,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
+                    "RETAIL.BSCLDM AS Model,RETAIL.XSYSDM AS Color,RETAIL.BSYSDM AS Color1,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
                     "REMARK.VSYHMC AS CustomerName,RETAIL.VSXSLY AS SalesSource,RETAIL.VSDDZT AS OrderStatus,RETAIL.VSSFFJ AS Accessory,EXTEND.VSJLBZ AS Club," +
                     "GET_DATE_STRING(RETAIL.VSDJRQ) AS CreateDate,'' AS EngineNo,RETAIL.DMFPLX AS InvoiceType,RETAIL.DMFPHM AS InvoiceNo,REMARK.VSLXDZ AS Address,REMARK.VSRYXB AS Gender," +
                     "REMARK.VSXJDM AS County,RETAIL.DMKHLB AS CustomerType,RETAIL.DMCLYT AS VehiclePurpose,REMARK.VTZJLX AS CertificateType,REMARK.VTZJHM AS CertificateNo," +
@@ -253,7 +257,7 @@ namespace MVC.Services.Retail.Impl
             {
                 selectFields = "RETAIL.CYVINM AS Vin,RETAIL.VSLSDD AS OrderNo,GET_DATE_TIME_STRING(RETAIL.VSLSRQ,RETAIL.VSLSSJ) AS RetailDateTime," +
                     "GET_DATE_STRING(RETAIL.VSLCRQ) AS OutStockDate,GET_DATE_STRING(RETAIL.DMFPRQ) AS InvoiceDate," +
-                    "RETAIL.BSCLDM AS Model,RETAIL.XSYSDM AS Color,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
+                    "RETAIL.BSCLDM AS Model,RETAIL.XSYSDM AS Color,RETAIL.BSYSDM AS Color1,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSNSYM AS Interior,RETAIL.BSPNXH AS PrList," +
                     "RETAIL.VSYHMC AS CustomerName,RETAIL.VSXSLY AS SalesSource,RETAIL.VSDDZT AS OrderStatus,RETAIL.VSSFFJ AS Accessory,EXTEND.VSJLBZ AS Club," +
                     "GET_DATE_STRING(RETAIL.VSDJRQ) AS CreateDate,'' AS EngineNo,RETAIL.DMFPLX AS InvoiceType,RETAIL.DMFPHM AS InvoiceNo,RETAIL.VSLXDZ AS Address,RETAIL.VSRYXB AS Gender," +
                     "RETAIL.VSXJDM AS County,RETAIL.DMKHLB AS CustomerType,RETAIL.DMCLYT AS VehiclePurpose,RETAIL.VTZJLX AS CertificateType,RETAIL.VTZJHM AS CertificateNo," +
@@ -283,23 +287,23 @@ namespace MVC.Services.Retail.Impl
 
             foreach (var item in list)
             {
-                IDictionary<string, string> regionDic = RetailCache.GetRegionDic();
+                IDictionary<string, string> regionDic = CommonCache.GetRegionDic();
                 if (item.Region != null && regionDic.ContainsKey(item.Region))
                 {
                     item.Region = regionDic[item.Region];
                 }
-                IDictionary<string, Dealer> dealerDic = RetailCache.GetDealerDic();
+                IDictionary<string, Dealer> dealerDic = SystemCache.GetDealerDic();
                 if (item.DealerCode != null && dealerDic.ContainsKey(item.DealerCode))
                 {
                     item.DealerName = dealerDic[item.DealerCode].DealerName;
                     item.NetCode = dealerDic[item.DealerCode].NetCode;
                 }
-                IDictionary<string, string> seriesDic = CommonCache.GetSeriesDic();
+                IDictionary<string, string> seriesDic = ProductCache.GetSeriesDic();
                 if (item.Series != null && seriesDic.ContainsKey(item.Series))
                 {
                     item.Series = seriesDic[item.Series];
                 }
-                IDictionary<string, ModelGroup> modelGroupDic = CommonCache.GetModelGroupDic();
+                IDictionary<string, ModelGroup> modelGroupDic = ProductCache.GetModelGroupDic();
                 string key = item.ModelCode + item.InteriorCode + item.PrList;
                 if (modelGroupDic.ContainsKey(key))
                 {
@@ -307,22 +311,22 @@ namespace MVC.Services.Retail.Impl
                     item.ModelVersion = modelGroupDic[key].ModelVersion;
                     item.PrList = modelGroupDic[key].PrList;
                 }
-                IDictionary<string, Model> modelDic = CommonCache.GetModelDic();
+                IDictionary<string, Model> modelDic = ProductCache.GetModelDic();
                 if (item.ModelCode != null && modelDic.ContainsKey(item.ModelCode))
                 {
                     item.ModelName = modelDic[item.ModelCode].ModelName;
                 }
-                IDictionary<string, string> colorDic = CommonCache.GetColorDic();
+                IDictionary<string, string> colorDic = ProductCache.GetColorDic();
                 if (item.ColorCode != null && colorDic.ContainsKey(item.ColorCode))
                 {
                     item.ColorName = colorDic[item.ColorCode];
                 }
-                IDictionary<string, string> interiorDic = CommonCache.GetInteriorDic();
+                IDictionary<string, string> interiorDic = ProductCache.GetInteriorDic();
                 if (item.InteriorCode != null && interiorDic.ContainsKey(item.InteriorCode))
                 {
                     item.InteriorName = interiorDic[item.InteriorCode];
                 }
-                IDictionary<string, County> countyDic = RetailCache.GetCountyDic();
+                IDictionary<string, County> countyDic = CommonCache.GetCountyDic();
                 if (item.County != null && countyDic.ContainsKey(item.County))
                 {
                     item.Provice = countyDic[item.County].ProvinceName;
@@ -419,12 +423,12 @@ namespace MVC.Services.Retail.Impl
                 sb.Append(item.Quantity + ",");
                 sb.Append(item.DeleteDate + ",");
                 sb.Append(item.OutStockDate + ",");
-                sb.Append(item.Remark + ",");
+                sb.Append(FileHelper.FilterSpecialChar(item.Remark) + ",");
                 sb.Append(item.Prize + ",");
                 sb.Append(item.InvoiceDate + ",");
                 sb.Append(item.Accessory + ",");
-                sb.Append(item.Owner + ",");
-                sb.Append(item.Insured + ",");
+                sb.Append(FileHelper.FilterSpecialChar(item.Owner) + ",");
+                sb.Append(FileHelper.FilterSpecialChar(item.Insured) + ",");
                 sb.Append(item.InsuranceCompany + ",");
                 sb.Append(item.InsuranceBillNo + ",");
                 sb.Append(item.InsuranceBeginDate + ",");
@@ -432,7 +436,7 @@ namespace MVC.Services.Retail.Impl
                 sb.Append(item.PaymentType + ",");
                 sb.Append(item.FinancialInstitution + ",");
                 sb.Append(item.LoanType + ",");
-                sb.Append(item.PaymentRemark + ",");
+                sb.Append(FileHelper.FilterSpecialChar(item.PaymentRemark) + ",");
                 sb.Append(item.UsedCar + ",");
                 sb.Append(item.LongStorage + ",");
                 sb.Append(item.Club + ",");
@@ -445,7 +449,7 @@ namespace MVC.Services.Retail.Impl
         public List<RetailOrderQueryExportVo> doFindRetailOrderByCondition(NameValueCollection queryString)
         {
             BaseDao<RetailOrderQueryExportVo> baseDao = DaoFactory<RetailOrderQueryExportVo>.CreateBaseDao(typeof(RetailOrderQueryExportVo));
-
+            Thread.Sleep(5000);
             string selectFields = string.Empty;
             string tableName = string.Empty;
             string condition = string.Empty;
@@ -455,7 +459,7 @@ namespace MVC.Services.Retail.Impl
                     "GET_DATE_STRING(RETAIL.VSDJRQ) AS CreateDate,GET_TIME_STRING(RETAIL.VSDJRQ) AS CreateTime," +
                     "GET_DATE_STRING(RETAIL.VSLSRQ) AS RetailDate,GET_TIME_STRING(RETAIL.VSLSSJ) AS RetailTime," +
                     "RETAIL.DMFPHM AS InvoiceNo,RETAIL.BSCLDM AS ModelCode,'' AS ModelName,RETAIL.XSYSDM AS ColorCode,'' AS ColorName," +
-                    "RETAIL.BSNSYM AS InteriorCode,'' AS InteriorName,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSPNXH AS PrList,RETAIL.VSLSSX AS SalesType,'' AS Series" +
+                    "RETAIL.BSNSYM AS InteriorCode,'' AS InteriorName,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSPNXH AS PrList,RETAIL.VSLSSX AS SalesType,'' AS Series," +
                     "CHAR(RETAIL.VSLSDJ) AS Price,REMARK.VSYHMC AS CustomerName,REMARK.DMLXRM AS Contact,REMARK.VSRYXB AS Gender,'' AS Provice,'' AS City,RETAIL.VSXJDM AS County," +
                     "REMARK.VSLXDZ AS Address,REMARK.DMYZBM AS ZipCode,RETAIL.DMCLYT AS VehiclePurpose,REMARK.DMFPLX AS InvoiceType,RETAIL.DMKHLB AS CustomerType,RETAIL.DMGSXZ AS CompanyProperty," +
                     "RETAIL.DMZWZW AS Duty,REMARK.DMDHHM AS Telephone,REMARK.DMSJHM AS Mobile,REMARK.VSDJYJ AS Email,REMARK.VTZJLX AS CertificateType,REMARK.VTZJHM AS CertificateNo," +
@@ -468,7 +472,7 @@ namespace MVC.Services.Retail.Impl
                     "EXTEND.VSRSZH AS UsedCar,EXTEND.VSCKLC AS LongStorage,EXTEND.VSJLBZ AS Club,EXTEND.VSSBCL AS ThreeGuarantees,EXTEND.VSSFWS AS OutSource";
                 tableName = "SJVDTALIB.IST15 RETAIL,SJVDTALIB.VST17 EXTEND,SJVDTALIB.VST16 EXTEND1,SJVDTALIB.VST19 REMARK";
                 condition = "AND RETAIL.ZMDWDM='08' AND EXTEND.ZMDWDM='08' AND EXTEND1.ZMDWDM='08' AND REMARK.ZMDWDM='08' " +
-                    "AND RETAIL.VSLSDD=EXTEND.VSLSDD AND RETAIL.VSLSDD=EXTEND1.VSLSDD AND RETAIL.VSLSDD=REMARK.VSLSDD";
+                    "AND RETAIL.VSLSDD=EXTEND.VSLSDD AND RETAIL.VSLSDD=EXTEND1.VSLSDD AND RETAIL.VSLSDD=REMARK.VSLSDD ";
                 if (!string.IsNullOrWhiteSpace(queryString["customerName"]))
                 {
                     condition += "AND REMARK.VSYHMC LIKE '%" + queryString["customerName"] + "%' ";
@@ -480,7 +484,7 @@ namespace MVC.Services.Retail.Impl
                     "GET_DATE_STRING(RETAIL.VSDJRQ) AS CreateDate,GET_TIME_STRING(RETAIL.VSDJRQ) AS CreateTime," +
                     "GET_DATE_STRING(RETAIL.VSLSRQ) AS RetailDate,GET_TIME_STRING(RETAIL.VSLSSJ) AS RetailTime," +
                     "RETAIL.DMFPHM AS InvoiceNo,RETAIL.BSCLDM AS ModelCode,'' AS ModelName,RETAIL.XSYSDM AS ColorCode,'' AS ColorName," +
-                    "RETAIL.BSNSYM AS InteriorCode,'' AS InteriorName,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSPNXH AS PrList,RETAIL.VSLSSX AS SalesType,'' AS Series" +
+                    "RETAIL.BSNSYM AS InteriorCode,'' AS InteriorName,'' AS ModelYear,'' AS ModelVersion,RETAIL.BSPNXH AS PrList,RETAIL.VSLSSX AS SalesType,'' AS Series," +
                     "CHAR(RETAIL.VSLSDJ) AS Price,RETAIL.VSYHMC AS CustomerName,RETAIL.DMLXRM AS Contact,RETAIL.VSRYXB AS Gender,'' AS Provice,'' AS City,RETAIL.VSXJDM AS County," +
                     "RETAIL.VSLXDZ AS Address,RETAIL.DMYZBM AS ZipCode,RETAIL.DMCLYT AS VehiclePurpose,RETAIL.DMFPLX AS InvoiceType,RETAIL.DMKHLB AS CustomerType,RETAIL.DMGSXZ AS CompanyProperty," +
                     "RETAIL.DMZWZW AS Duty,RETAIL.DMDHHM AS Telephone,RETAIL.DMSJHM AS Mobile,RETAIL.VSDJYJ AS Email,RETAIL.VTZJLX AS CertificateType,RETAIL.VTZJHM AS CertificateNo," +
@@ -492,7 +496,7 @@ namespace MVC.Services.Retail.Impl
                     "EXTEND.ZWZFDM AS PaymentType,EXTEND.ZWJJDM AS FinancialInstitution,EXTEND.ZWDLDM AS LoanType,EXTEND.ZWZFBZ AS PaymentRemark," +
                     "EXTEND.VSRSZH AS UsedCar,EXTEND.VSCKLC AS LongStorage,EXTEND.VSJLBZ AS Club,EXTEND.VSSBCL AS ThreeGuarantees,EXTEND.VSSFWS AS OutSource";
                 tableName = "SJVDTALIB.IST15 RETAIL,SJVDTALIB.VST17 EXTEND,SJVDTALIB.VST16 EXTEND1";
-                condition = "AND RETAIL.ZMDWDM='08' AND EXTEND.ZMDWDM='08' AND EXTEND1.ZMDWDM='08' AND RETAIL.VSLSDD=EXTEND.VSLSDD AND RETAIL.VSLSDD=EXTEND1.VSLSDD";
+                condition = "AND RETAIL.ZMDWDM='08' AND EXTEND.ZMDWDM='08' AND EXTEND1.ZMDWDM='08' AND RETAIL.VSLSDD=EXTEND.VSLSDD AND RETAIL.VSLSDD=EXTEND1.VSLSDD ";
                 if (!string.IsNullOrWhiteSpace(queryString["customerName"]))
                 {
                     condition += "AND RETAIL.VSYHMC LIKE '%" + queryString["customerName"] + "%' ";

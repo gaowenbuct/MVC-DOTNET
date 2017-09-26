@@ -15,11 +15,11 @@ namespace MVC.Services.System.Impl.Tests
         [TestMethod()]
         public void doGetDealerCodeByUsernameTest()
         {
-            DealerUserService vmsUserService = new DealerUserServiceImpl();
+            DealerService dealerService = new DealerServiceImpl();
             string result = string.Empty;
-            result=vmsUserService.doGetDealerCodeByUsername("PGMTF");
+            result= dealerService.doGetDealerCodeByUsername("PGMTF");
             Assert.AreNotEqual(result, string.Empty);
-            result = vmsUserService.doGetDealerCodeByUsername("PGMTF1");
+            result = dealerService.doGetDealerCodeByUsername("PGMTF1");
             Assert.AreEqual(result, string.Empty);
         }
     }

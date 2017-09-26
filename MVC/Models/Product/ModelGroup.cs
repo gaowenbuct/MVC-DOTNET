@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace MVC.Models.Common
+namespace MVC.Models.Product
 {
     public class ModelGroup
     {
